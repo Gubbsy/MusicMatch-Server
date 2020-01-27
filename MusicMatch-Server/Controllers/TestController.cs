@@ -29,5 +29,18 @@ namespace MusicMatch_Server.Controllers
                 FavCheese = newTestDbo.FavCheese
            };
         }
+
+        [HttpGet("gettests")]
+        public async Task<IEnumerable<Responses.Test>> GetTests()
+        {
+            //Need to error check req model
+            IEnumerable<TestDbo> tests = await testRepository.GetAllTests();
+
+            return tests.Select(t => new Responses.Test
+            {
+                Name = t.Name,
+                FavCheese = t.FavCheese
+            });
+        }
     }
 }

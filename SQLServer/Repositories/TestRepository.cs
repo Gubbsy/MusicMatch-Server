@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace SQLServer.Repositories
 {
@@ -37,6 +39,11 @@ namespace SQLServer.Repositories
             await appDbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return newTest;
+        }
+
+        public async Task<IEnumerable<TestDbo>> GetAllTests() 
+        {
+            return await appDbContext.Testdbos.ToListAsync().ConfigureAwait(false);
         }
     }
 }
