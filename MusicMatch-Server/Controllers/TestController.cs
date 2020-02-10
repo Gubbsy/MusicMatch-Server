@@ -42,5 +42,17 @@ namespace MusicMatch_Server.Controllers
                 FavCheese = t.FavCheese
             });
         }
+
+        [HttpGet("gettestsbycheese")]
+        public async Task<IEnumerable<Responses.Test>> GetTestsByCheese(Requests.CheeseTest cheese)
+        {
+            IEnumerable<TestDbo> tests = await testRepository.GetTestsByCheese(cheese.Cheese);
+
+            return tests.Select(t => new Responses.Test
+            {
+                Name = t.Name,
+                FavCheese = t.FavCheese
+            });
+        }
     }
 }

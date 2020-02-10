@@ -45,5 +45,10 @@ namespace SQLServer.Repositories
         {
             return await appDbContext.Testdbos.ToListAsync().ConfigureAwait(false);
         }
+
+        public async Task<IEnumerable<TestDbo>> GetTestsByCheese(string cheese) 
+        {
+            return await appDbContext.Testdbos.Where(t => t.FavCheese == cheese).ToListAsync().ConfigureAwait(false);
+        }
     }
 }
