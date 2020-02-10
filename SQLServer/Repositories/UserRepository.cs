@@ -1,0 +1,54 @@
+﻿using Microsoft.AspNetCore.Identity;
+using SQLServer.Models;
+using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+
+namespace SQLServer.Repositories
+{ 
+    public class UserRepository
+    {
+        private readonly UserManager<ApplicationUserDbo> userManager;
+        private readonly AppDbContext appDbContext;
+
+        public UserRepository(UserManager<ApplicationUserDbo> userManager, AppDbContext appDbContext)
+        {
+            this.userManager = userManager;
+            this.appDbContext = appDbContext;
+        }
+
+        public async Task<ApplicationUserDbo> Register(string username, string email, string password, string name, string bio, double lat, double lon) 
+        {
+            if ((await appDbContext.Users.CountAsync(u => u.UserName == username)) != 0)
+            {
+                throw new ArgumentException("This value needs to be unique", nameof(username));
+            }
+
+            ApplicationUserDbo newUser = new ApplicationUserDbo
+            {
+                UserName = username,
+                Email = email,
+                Name = name,
+                Bio = bio,
+                Lat = lat,
+                Lon = lon
+            };
+
+            IdentityResult identityResult = await userManager.CreateAsync(newUser, password).ConfigureAwait(false);
+
+            //TODO: Throw exceptions array for IdentityResult
+            if (!identityResult.Succeeded) 
+            {
+                throw new InvalidOperationException(identityResult.Errors.ToList()[0].Description);
+            }
+            await appDbContext.SaveChangesAsync().ConfigureAwait(false);
+
+            return await appDbContext.Users.FirstOrDefaultAsync(u => u.UserName == newUser.UserName);
+     
+
+        }
+    }
+}

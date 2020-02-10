@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace MusicMatch_Server.Controllers
 {
     [ApiController]
-    public class TestController
+    public class TestController : ControllerBase
     {
         private readonly TestRepository testRepository;
 
