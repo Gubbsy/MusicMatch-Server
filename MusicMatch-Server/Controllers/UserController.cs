@@ -20,26 +20,20 @@ namespace MusicMatch_Server.Controllers
         }
 
         [HttpPost("createuser")]
-        public async Task<ObjectResult> CreateTest(Requests.CreateUser createUser)
+        public async Task<Responses.NewUser> CreateTest(Requests.CreateUser createUser)
         {
-            try
+            ApplicationUserDbo newUserdbo = await userRepository.Register(createUser.Username, createUser.Email, createUser.Password, createUser.Name, createUser.Bio, createUser.Lat, createUser.Lon);
+            return new Responses.NewUser
             {
-                ApplicationUserDbo newUserdbo = await userRepository.Register(createUser.Username, createUser.Email, createUser.Password, createUser.Name, createUser.Bio, createUser.Lat, createUser.Lon);
-                return Ok(new Responses.NewUser
-                {
-                    Id = newUserdbo.Id,
-                    Username = newUserdbo.Name,
-                    Email = newUserdbo.Email,
-                    Name = newUserdbo.Name,
-                    Bio = newUserdbo.Bio,
-                    Lat = newUserdbo.Lat,
-                    Lon = newUserdbo.Lon
-                });
-            }
-            catch (ArgumentException e)
-            {
-                return BadRequest("There was a problem with paramater " + e.ParamName + ": " + e.Message);
-            }
+                Id = newUserdbo.Id,
+                Username = newUserdbo.Name,
+                Email = newUserdbo.Email,
+                Name = newUserdbo.Name,
+                Bio = newUserdbo.Bio,
+                Lat = newUserdbo.Lat,
+                Lon = newUserdbo.Lon
+            };
+            
         }
     }
 }

@@ -7,9 +7,16 @@ namespace SQLServer.Exceptions
     {
         public string[] ErrorMessages { get; }
 
-        public RepositoryException(string[] errorMessage) : base("A repository has thrown an exception ")
+        public RepositoryException(string errorMessage) : this(errorMessage, null)
         {
-            ErrorMessages = errorMessage;
+        }
+
+        public RepositoryException(string[] errorMessages) : this(errorMessages, null)
+        {
+        }
+
+        public RepositoryException(string errorMessage, Exception inner) : this(new string[] { errorMessage }, inner)
+        {
         }
 
         public RepositoryException(string[] errorMessage, Exception inner) : base("A repository has thrown an exception: ", inner)

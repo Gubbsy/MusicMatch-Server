@@ -25,7 +25,7 @@ namespace SQLServer.Repositories
         {
             if ((await appDbContext.Users.CountAsync(u => u.UserName == username)) != 0)
             {
-                throw new ArgumentException("This value needs to be unique", nameof(username));
+                throw new RepositoryException(nameof(username) + " value needs to be unique" );
             }
 
             ApplicationUserDbo newUser = new ApplicationUserDbo
