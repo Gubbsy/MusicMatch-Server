@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using SQLServer.Exceptions;
 
 namespace SQLServer.Repositories
 { 
@@ -42,7 +43,7 @@ namespace SQLServer.Repositories
             //TODO: Throw exceptions array for IdentityResult
             if (!identityResult.Succeeded) 
             {
-                throw new InvalidOperationException(identityResult.Errors.ToList()[0].Description);
+                throw new RepositoryException(identityResult.Errors.Select(e => e.Description).ToArray());
             }
             await appDbContext.SaveChangesAsync().ConfigureAwait(false);
 

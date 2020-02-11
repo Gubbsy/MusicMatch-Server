@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SQLServer.Exceptions;
 using SQLServer.Models;
 using SQLServer.Repositories;
 using System;
@@ -38,10 +39,6 @@ namespace MusicMatch_Server.Controllers
             catch (ArgumentException e)
             {
                 return BadRequest("There was a problem with paramater " + e.ParamName + ": " + e.Message);
-            }
-            catch (InvalidOperationException e)
-            {
-                return BadRequest(e.Message);
             }
         }
     }
