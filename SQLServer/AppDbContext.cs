@@ -47,7 +47,17 @@ namespace SQLServer
 
         private void SeedRoles(ModelBuilder modelBuilder)
         {
-           
+            modelBuilder.Entity<IdentityRole>().HasData(
+                   new IdentityRole
+                   {
+                       Name = AccountRoles.Artist,
+                       NormalizedName = AccountRoles.Artist.ToUpperInvariant()
+                   },
+                   new IdentityRole
+                   {
+                       Name = AccountRoles.EventsManager,
+                       NormalizedName = AccountRoles.EventsManager.ToUpperInvariant()
+                   });
         }
     }
 }

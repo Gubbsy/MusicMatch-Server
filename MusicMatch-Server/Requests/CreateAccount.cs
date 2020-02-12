@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MusicMatch_Server.Requests
 {
-    public class CreateUser
+    public class CreateAccount
     {
         [Required]
         public string Username { get; set; }
@@ -24,6 +24,8 @@ namespace MusicMatch_Server.Requests
         public double Lat { get; set; }
         [Required]
         public double Lon { get; set; }
+        [Required]
+        public string AccountRole { get; set; }
 
     }
 }
