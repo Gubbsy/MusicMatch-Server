@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MusicMatch_Server.FIlters;
 using MusicMatch_Server.Responses;
 using Newtonsoft.Json;
 using SQLServer;
@@ -45,40 +46,25 @@ namespace MusicMatch_Server
                 options.Password.RequiredLength = 8;
             }).AddEntityFrameworkStores<AppDbContext>();
 
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(new ValidationFilter());
+            })
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseExceptionHandler(errorApp =>
+
+            if (env.IsDevelopment())
             {
-                errorApp.Run(async context =>
-                {
-                  
-                   
-                    context.Response.StatusCode = 400;
-                    context.Response.ContentType = "application/json";
+                app.UseDeveloperExceptionPage();
+            }
 
-                    var exceptionHandlerPathFeature =
-                        context.Features.Get<IExceptionHandlerPathFeature>();
-
-                    
-
-                    if (exceptionHandlerPathFeature?.Error is RepositoryException repositoryException)
-                    {
-                        ErrorResponse errorResponse = new ErrorResponse
-                        {
-                            Error = exceptionHandlerPathFeature.Error.Message,
-                            ErrorMessages = repositoryException.ErrorMessages,
-                        };
-
-                        var error = JsonConvert.SerializeObject(errorResponse);
-                        await context.Response.WriteAsync(error);
-                    }
-                    
-                });
-            });
             app.UseHsts();
 
             app.UseHttpsRedirection();

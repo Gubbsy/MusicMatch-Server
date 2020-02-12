@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace MusicMatch_Server.Controllers
 {
     [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountController : APIControllerBase
     {
         private readonly UserRepository userRepository;
 
@@ -20,20 +20,19 @@ namespace MusicMatch_Server.Controllers
         }
 
         [HttpPost("createuser")]
-        public async Task<Responses.NewUser> CreateTest(Requests.CreateAccount createAccount)
+        public async Task<ObjectResult> CreateTest(Requests.CreateAccount createAccount)
         {
             ApplicationUserDbo newUserdbo = await userRepository.Register(createAccount.Username, createAccount.Email, createAccount.Password, createAccount.Name, createAccount.Bio, createAccount.Lat, createAccount.Lon, createAccount.AccountRole);
-            return new Responses.NewUser
+            return Ok(new Responses.NewUser
             {
                 Id = newUserdbo.Id,
-                Username = newUserdbo.Name,
+                Username = newUserdbo.UserName,
                 Email = newUserdbo.Email,
                 Name = newUserdbo.Name,
                 Bio = newUserdbo.Bio,
                 Lat = newUserdbo.Lat,
                 Lon = newUserdbo.Lon
-            };
-            
+            });
         }
     }
 }
