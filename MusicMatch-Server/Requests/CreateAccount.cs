@@ -9,6 +9,8 @@ namespace MusicMatch_Server.Requests
     public class CreateAccount
     {
         [Required]
+        public string AccountRole { get; set; }
+        [Required]
         public string Username { get; set; }
         [Required]
         [RegularExpression(@"^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$",
@@ -19,13 +21,16 @@ namespace MusicMatch_Server.Requests
         [Required]
         public string Name { get; set; }
         [Required]
-        public string Bio { get; set; }
-        [Required]
         public double Lat { get; set; }
         [Required]
         public double Lon { get; set; }
         [Required]
-        public string AccountRole { get; set; }
 
+        public string Bio { get; set; }
+        [Required]
+        public string LookingFor { get; set; }
+        public string[] Genres { get; set; }
+        [Required]
+        public int MatchRadius { get; set; }
     }
 }

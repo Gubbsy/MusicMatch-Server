@@ -2,8 +2,6 @@
 using SQLServer.Models;
 using System;
 using System.Linq;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SQLServer.Exceptions;
@@ -21,28 +19,34 @@ namespace SQLServer.Repositories
             this.appDbContext = appDbContext;
         }
 
-        public async Task<ApplicationUserDbo> Register(string username, string email, string password, string name, string bio, double lat, double lon, string accountRole) 
+        public async Task<ApplicationUserDbo> Register(string accountRole, string username, string email, string password, string name, double lat, double lon, string bio, string lookingFor, string[] genres, int matchRadius) 
         {
+            accountRole = Utils.ValidatorService.CheckRoleExists(accountRole) ?? throw new RepositoryException("Role " + accountRole.ToUpper() + " does not exist");
             username = Utils.ValidatorService.CheckIsEmpty(username) ?? throw new RepositoryException("USERNAME cannot be empty or null");
             email = Utils.ValidatorService.CheckIsEmpty(email) ?? throw new RepositoryException("EMAIL cannot be empty or null");
             password = Utils.ValidatorService.CheckIsEmpty(password) ?? throw new RepositoryException("PASSWORD cannot be empty or null");
             name = Utils.ValidatorService.CheckIsEmpty(name) ?? throw new RepositoryException("NAME cannot be empty or null");
             bio = Utils.ValidatorService.CheckIsEmpty(bio) ?? throw new RepositoryException("BIO cannot be empty or null");
-            accountRole = Utils.ValidatorService.CheckRoleExists(accountRole) ?? throw new RepositoryException("Role " + accountRole.ToUpper() + " does not exist");
+            lookingFor = Utils.ValidatorService.CheckIsEmpty(lookingFor) ?? throw new RepositoryException("LOOKINGFOR cannot be empty or null");
+
 
             if ((await appDbContext.Users.CountAsync(u => u.UserName == username)) != 0)
             {
                 throw new RepositoryException(nameof(username) + " value needs to be unique" );
             }
 
+
             ApplicationUserDbo newUser = new ApplicationUserDbo
             {
                 UserName = username,
                 Email = email,
                 Name = name,
-                Bio = bio,
                 Lat = lat,
-                Lon = lon
+                Lon = lon,
+                Bio = bio,
+                LookingFor = lookingFor,
+                MatchRadius = matchRadius
+                
             };
 
             using (var transaction = appDbContext.Database.BeginTransaction()) 
@@ -67,9 +71,62 @@ namespace SQLServer.Repositories
                 await appDbContext.SaveChangesAsync().ConfigureAwait(false);
 
                 transaction.Commit();
-                return await appDbContext.Users.FirstOrDefaultAsync(u => u.UserName == newUser.UserName);
             }
 
+            await GenreAdditions(genres, newUser).ConfigureAwait(false);
+
+
+            return await appDbContext.Users.FirstOrDefaultAsync(u => u.UserName == newUser.UserName);
+        }
+
+        public async Task<GenreDbo> GenreAdditions(string[] genres, ApplicationUserDbo user) 
+        {
+            GenreDbo genreDbo = null;
+
+            foreach (string genre in genres)
+            {
+                if ((await appDbContext.Genres.CountAsync(g => g.Name == genre)) == 0)
+                {
+                    genreDbo = new GenreDbo
+                    {
+                        Name = genre
+                    };
+
+                    try
+                    {
+                        appDbContext.Genres.Add(genreDbo);
+                    }
+                    catch (InvalidOperationException e)
+                    {
+                        throw new RepositoryException(e.Message);
+                    }
+                }
+                else 
+                {
+                    genreDbo = await appDbContext.Genres.FirstOrDefaultAsync(g => g.Name == genre);
+                }
+
+                UserGenreDbo userGenreDbo = new UserGenreDbo
+                {
+                    UserId = user.Id,
+                    AssociatedUser = user,
+                    GenreId = genreDbo.Id,
+                    Genre = genreDbo
+                };
+
+                try
+                {
+                    appDbContext.UserGenre.Add(userGenreDbo);
+                }
+                catch
+                {
+                    throw new RepositoryException("Unable to add genre");
+                }
+            }
+
+            await appDbContext.SaveChangesAsync().ConfigureAwait(false);
+
+            return genreDbo;
         }
     }
 }
