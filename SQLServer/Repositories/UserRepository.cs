@@ -45,27 +45,30 @@ namespace SQLServer.Repositories
                 Lon = lon
             };
 
-            IdentityResult identityResult = await userManager.CreateAsync(newUser, password).ConfigureAwait(false);
-
-            if (!identityResult.Succeeded) 
+            using (var transaction = appDbContext.Database.BeginTransaction()) 
             {
-                throw new RepositoryException(identityResult.Errors.Select(e => e.Description).ToArray());
-            }
+                IdentityResult identityResult = await userManager.CreateAsync(newUser, password).ConfigureAwait(false);
 
-            // Add transactions, fail to cerate  role should role back account creation.
-            try
-            {
-                IdentityResult addRoleIdentityResult = await userManager.AddToRoleAsync(newUser, accountRole).ConfigureAwait(false);
-            }
-            catch (InvalidOperationException e)
-            {
-                throw new RepositoryException(e.Message, e);
-            }
-           
-            await appDbContext.SaveChangesAsync().ConfigureAwait(false);
+                if (!identityResult.Succeeded)
+                {
+                    throw new RepositoryException(identityResult.Errors.Select(e => e.Description).ToArray());
+                }
 
-            return await appDbContext.Users.FirstOrDefaultAsync(u => u.UserName == newUser.UserName);
-     
+                // Add transactions, fail to cerate  role should role back account creation.
+                try
+                {
+                    IdentityResult addRoleIdentityResult = await userManager.AddToRoleAsync(newUser, accountRole).ConfigureAwait(false);
+                }
+                catch (InvalidOperationException e)
+                {
+                    throw new RepositoryException(e.Message, e);
+                }
+
+                await appDbContext.SaveChangesAsync().ConfigureAwait(false);
+
+                transaction.Commit();
+                return await appDbContext.Users.FirstOrDefaultAsync(u => u.UserName == newUser.UserName);
+            }
 
         }
     }
