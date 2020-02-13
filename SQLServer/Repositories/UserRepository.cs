@@ -28,7 +28,7 @@ namespace SQLServer.Repositories
             password = Utils.ValidatorService.CheckIsEmpty(password) ?? throw new RepositoryException("PASSWORD cannot be empty or null");
             name = Utils.ValidatorService.CheckIsEmpty(name) ?? throw new RepositoryException("NAME cannot be empty or null");
             bio = Utils.ValidatorService.CheckIsEmpty(bio) ?? throw new RepositoryException("BIO cannot be empty or null");
-            accountRole = Utils.ValidatorService.CheckRoleExists(accountRole) ?? throw new RepositoryException("Provided role does not exist");
+            accountRole = Utils.ValidatorService.CheckRoleExists(accountRole) ?? throw new RepositoryException("Role " + accountRole.ToUpper() + " does not exist");
 
             if ((await appDbContext.Users.CountAsync(u => u.UserName == username)) != 0)
             {
