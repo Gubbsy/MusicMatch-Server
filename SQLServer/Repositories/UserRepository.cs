@@ -19,7 +19,7 @@ namespace SQLServer.Repositories
             this.appDbContext = appDbContext;
         }
 
-        public async Task<ApplicationUserDbo> Register(string accountRole, string username, string email, string password, string name, double lat, double lon, string bio, string lookingFor, string[] genres, int matchRadius) 
+        public async Task<ApplicationUserDbo> Register(string accountRole, string username, string email, string password, string name, double lat, double lon, string bio, string lookingFor, string[] genres, string[] venues ,int matchRadius) 
         {
             accountRole = Utils.ValidatorService.CheckRoleExists(accountRole) ?? throw new RepositoryException("Role " + accountRole.ToUpper() + " does not exist");
             username = Utils.ValidatorService.CheckIsEmpty(username) ?? throw new RepositoryException("USERNAME cannot be empty or null");
@@ -74,6 +74,7 @@ namespace SQLServer.Repositories
             }
 
             await GenreAdditions(genres, newUser).ConfigureAwait(false);
+            await VenueAdditions(venues, newUser).ConfigureAwait(false);
 
 
             return await appDbContext.Users.FirstOrDefaultAsync(u => u.UserName == newUser.UserName);
@@ -120,13 +121,63 @@ namespace SQLServer.Repositories
                 }
                 catch
                 {
-                    throw new RepositoryException("Unable to add genre");
+                    throw new RepositoryException("Unable to add GENRE(S)");
                 }
             }
 
             await appDbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return genreDbo;
+        }
+
+        public async Task<VenueDbo> VenueAdditions(string[] venues, ApplicationUserDbo user)
+        {
+            VenueDbo venueDbo = null;
+
+            foreach (string venue in venues)
+            {
+                if ((await appDbContext.Venues.CountAsync(v => v.Name == venue)) == 0)
+                {
+                    venueDbo = new VenueDbo
+                    {
+                        Name = venue
+                    };
+
+                    try
+                    {
+                        appDbContext.Venues.Add(venueDbo);
+                    }
+                    catch (InvalidOperationException e)
+                    {
+                        throw new RepositoryException(e.Message);
+                    }
+                }
+                else
+                {
+                    venueDbo = await appDbContext.Venues.FirstOrDefaultAsync(v => v.Name == venue);
+                }
+
+                UserVenueDbo userVenueDbo = new UserVenueDbo
+                {
+                    UserId = user.Id,
+                    AssociatedUser = user,
+                    VenueId = venueDbo.Id,
+                    Venue = venueDbo
+                };
+
+                try
+                {
+                    appDbContext.UserVenue.Add(userVenueDbo);
+                }
+                catch
+                {
+                    throw new RepositoryException("Unable to add VENUE(S)");
+                }
+            }
+
+            await appDbContext.SaveChangesAsync().ConfigureAwait(false);
+
+            return venueDbo;
         }
     }
 }

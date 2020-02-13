@@ -13,7 +13,9 @@ namespace SQLServer
 
         public DbSet<TestDbo> Testdbos { get; set; }
         public DbSet<GenreDbo> Genres { get; set; }
+        public DbSet<VenueDbo> Venues { get; set; }
         public DbSet<UserGenreDbo> UserGenre { get; set; }
+        public DbSet<UserVenueDbo> UserVenue { get; set; }
 
         //  Constructors
         //  ============
@@ -43,11 +45,17 @@ namespace SQLServer
             modelBuilder.Entity<UserGenreDbo>()
             .HasKey(ug => new { ug.UserId, ug.GenreId });
 
+            modelBuilder.Entity<UserVenueDbo>()
+            .HasKey(ug => new { ug.UserId, ug.VenueId });
+
             modelBuilder.Entity<TestDbo>()
                 .HasKey(t => t.Id);
 
             modelBuilder.Entity<GenreDbo>()
                 .HasKey(g => g.Id);
+
+            modelBuilder.Entity<VenueDbo>()
+                .HasKey(v => v.Id);
         }
 
         private void SetUpManyToManyRelationships(ModelBuilder modelBuilder)
@@ -60,6 +68,16 @@ namespace SQLServer
             modelBuilder.Entity<UserGenreDbo>()
             .HasOne(ug => ug.AssociatedUser)
             .WithMany(u => u.Genres)
+            .HasForeignKey(ug => ug.UserId);
+
+            modelBuilder.Entity<UserVenueDbo>()
+           .HasOne(ug => ug.Venue)
+           .WithMany(u => u.AssociatedUsers)
+           .HasForeignKey(ug => ug.VenueId);
+
+            modelBuilder.Entity<UserVenueDbo>()
+            .HasOne(ug => ug.AssociatedUser)
+            .WithMany(u => u.Venues)
             .HasForeignKey(ug => ug.UserId);
         }
 

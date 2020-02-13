@@ -22,7 +22,7 @@ namespace MusicMatch_Server.Controllers
         [HttpPost("createuser")]
         public async Task<ObjectResult> CreateTest(Requests.CreateAccount createAccount)
         {
-            ApplicationUserDbo newUserdbo = await userRepository.Register(createAccount.AccountRole, createAccount.Username, createAccount.Email, createAccount.Password, createAccount.Name, createAccount.Lat, createAccount.Lon, createAccount.Bio, createAccount.LookingFor, createAccount.Genres, createAccount.MatchRadius);
+            ApplicationUserDbo newUserdbo = await userRepository.Register(createAccount.AccountRole, createAccount.Username, createAccount.Email, createAccount.Password, createAccount.Name, createAccount.Lat, createAccount.Lon, createAccount.Bio, createAccount.LookingFor, createAccount.Genres, createAccount.Venues, createAccount.MatchRadius);
             return Ok(new Responses.NewUser
             {
                 Id = newUserdbo.Id,
@@ -34,6 +34,7 @@ namespace MusicMatch_Server.Controllers
                 Bio = newUserdbo.Bio,
                 LookingFor = newUserdbo.LookingFor,
                 Genres = newUserdbo.Genres.Select(ug => ug.Genre.Name).ToArray(),
+                Venues = newUserdbo.Venues.Select(uv => uv.Venue.Name).ToArray(),
             });
         }
     }
