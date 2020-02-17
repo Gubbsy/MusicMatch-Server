@@ -21,6 +21,7 @@ namespace SQLServer.Repositories
 
         public async Task<ApplicationUserDbo> Register(string accountRole, string username, string email, string password, string name, double lat, double lon, string bio, string lookingFor, string[] genres, string[] venues ,int matchRadius) 
         {
+            accountRole = accountRole.ToUpper();
             accountRole = Utils.ValidatorService.CheckRoleExists(accountRole) ?? throw new RepositoryException("Role " + accountRole.ToUpper() + " does not exist");
             username = Utils.ValidatorService.CheckIsEmpty(username) ?? throw new RepositoryException("USERNAME cannot be empty or null");
             email = Utils.ValidatorService.CheckIsEmpty(email) ?? throw new RepositoryException("EMAIL cannot be empty or null");
