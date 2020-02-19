@@ -18,21 +18,5 @@ namespace MusicMatch_Server.Requests
         public string Email { get; set; }
         [Required]
         public string Password { get; set; }
-        [Required]
-        public string Name { get; set; }
-        [Required]
-        public double Lat { get; set; }
-        [Required]
-        public double Lon { get; set; }
-        [Required]
-        public string Bio { get; set; }
-        [Required]
-        public string LookingFor { get; set; }
-        [Required]
-        public string[] Genres { get; set; }
-        [Required]
-        public string[] Venues { get; set; }
-        [Required]
-        public int MatchRadius { get; set; }
     }
 }

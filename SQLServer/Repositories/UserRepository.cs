@@ -19,16 +19,14 @@ namespace SQLServer.Repositories
             this.appDbContext = appDbContext;
         }
 
-        public async Task<ApplicationUserDbo> Register(string accountRole, string username, string email, string password, string name, double lat, double lon, string bio, string lookingFor, string[] genres, string[] venues ,int matchRadius) 
+        public async Task<ApplicationUserDbo> Register(string accountRole, string username, string email, string password) 
         {
             accountRole = accountRole.ToUpper();
-            accountRole = Utils.ValidatorService.CheckRoleExists(accountRole) ?? throw new RepositoryException("Role " + accountRole.ToUpper() + " does not exist");
+            accountRole = Utils.ValidatorService.CheckRoleExists(accountRole) ?? throw new RepositoryException("Role " + accountRole + " does not exist");
             username = Utils.ValidatorService.CheckIsEmpty(username) ?? throw new RepositoryException("USERNAME cannot be empty or null");
             email = Utils.ValidatorService.CheckIsEmpty(email) ?? throw new RepositoryException("EMAIL cannot be empty or null");
             password = Utils.ValidatorService.CheckIsEmpty(password) ?? throw new RepositoryException("PASSWORD cannot be empty or null");
-            name = Utils.ValidatorService.CheckIsEmpty(name) ?? throw new RepositoryException("NAME cannot be empty or null");
-            bio = Utils.ValidatorService.CheckIsEmpty(bio) ?? throw new RepositoryException("BIO cannot be empty or null");
-            lookingFor = Utils.ValidatorService.CheckIsEmpty(lookingFor) ?? throw new RepositoryException("LOOKINGFOR cannot be empty or null");
+   
 
 
             if ((await appDbContext.Users.CountAsync(u => u.UserName == username)) != 0)
@@ -41,13 +39,12 @@ namespace SQLServer.Repositories
             {
                 UserName = username,
                 Email = email,
-                Name = name,
-                Lat = lat,
-                Lon = lon,
-                Bio = bio,
-                LookingFor = lookingFor,
-                MatchRadius = matchRadius
-                
+                Name = "",
+                Lat = 0,
+                Lon = 0,
+                Bio = "",
+                LookingFor = "",
+                MatchRadius = 100
             };
 
             using (var transaction = appDbContext.Database.BeginTransaction()) 
@@ -74,11 +71,7 @@ namespace SQLServer.Repositories
                 transaction.Commit();
             }
 
-            await GenreAdditions(genres, newUser).ConfigureAwait(false);
-            await VenueAdditions(venues, newUser).ConfigureAwait(false);
-
-
-            return await appDbContext.Users.FirstOrDefaultAsync(u => u.UserName == newUser.UserName);
+             return await appDbContext.Users.FirstOrDefaultAsync(u => u.UserName == newUser.UserName);
         }
 
         public async Task<GenreDbo> GenreAdditions(string[] genres, ApplicationUserDbo user) 

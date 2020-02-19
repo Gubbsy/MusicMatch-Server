@@ -22,19 +22,13 @@ namespace MusicMatch_Server.Controllers
         [HttpPost(Endpoints.Account + "createaccount")]
         public async Task<ObjectResult> CreateTest(Requests.CreateAccount createAccount)
         {
-            ApplicationUserDbo newUserdbo = await userRepository.Register(createAccount.AccountRole, createAccount.Username, createAccount.Email, createAccount.Password, createAccount.Name, createAccount.Lat, createAccount.Lon, createAccount.Bio, createAccount.LookingFor, createAccount.Genres, createAccount.Venues, createAccount.MatchRadius);
+            ApplicationUserDbo newUserdbo = await userRepository.Register(createAccount.AccountRole, createAccount.Username, createAccount.Email, createAccount.Password);
             return Ok(new Responses.NewUser
             {
                 Id = newUserdbo.Id,
+                AccountRole = createAccount.AccountRole,
                 Username = newUserdbo.UserName,
                 Email = newUserdbo.Email,
-                Name = newUserdbo.Name,
-                Lat = newUserdbo.Lat,
-                Lon = newUserdbo.Lon,
-                Bio = newUserdbo.Bio,
-                LookingFor = newUserdbo.LookingFor,
-                Genres = newUserdbo.Genres.Select(ug => ug.Genre.Name).ToArray(),
-                Venues = newUserdbo.Venues.Select(uv => uv.Venue.Name).ToArray(),
             });
         }
     }
