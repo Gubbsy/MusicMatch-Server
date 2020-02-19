@@ -22,7 +22,7 @@ namespace MusicMatch_Server.Controllers
         [HttpPost(Endpoints.Account + "createaccount")]
         public async Task<ObjectResult> CreateTest(Requests.CreateAccount createAccount)
         {
-            ApplicationUserDbo newUserdbo = await userRepository.Register(createAccount.AccountRole, createAccount.Username, createAccount.Email, createAccount.Password);
+            ApplicationUserDbo newUserdbo = await userRepository.Register(createAccount.AccountRole, createAccount.Username, createAccount.Email.ToLower(), createAccount.Password);
             return Ok(new Responses.NewUser
             {
                 Id = newUserdbo.Id,
