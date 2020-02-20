@@ -48,6 +48,13 @@ namespace MusicMatch_Server
                 options.Password.RequiredLength = 8;
             }).AddEntityFrameworkStores<AppDbContext>();
 
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.HttpOnly = true;
+                options.SlidingExpiration = true;
+            });
+
             services.AddControllers(options =>
             {
                 options.Filters.Add(new ValidationFilter());
@@ -67,15 +74,15 @@ namespace MusicMatch_Server
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHsts();
-
             app.UseHttpsRedirection();
+
+            app.UseAuthentication();
 
             app.UseRouting();
 
-            app.UseAuthorization();
-
             app.UseOptions();
+
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
