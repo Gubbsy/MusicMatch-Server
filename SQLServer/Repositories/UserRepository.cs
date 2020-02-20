@@ -34,6 +34,10 @@ namespace SQLServer.Repositories
                 throw new RepositoryException(nameof(username) + " value needs to be unique" );
             }
 
+            if ((await appDbContext.Users.CountAsync(u => u.Email == email)) != 0)
+            {
+                throw new RepositoryException(nameof(email) + " is already taken");
+            }
 
             ApplicationUserDbo newUser = new ApplicationUserDbo
             {

@@ -41,6 +41,7 @@ namespace MusicMatch_Server
 
             services.AddScoped<TestRepository>();
             services.AddScoped<UserRepository>();
+            services.AddScoped<SignInRepository>();
 
             services.AddIdentity<ApplicationUserDbo, IdentityRole>(options =>
             {

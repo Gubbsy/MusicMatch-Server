@@ -13,10 +13,12 @@ namespace MusicMatch_Server.Controllers
     public class AccountController : APIControllerBase
     {
         private readonly UserRepository userRepository;
+        private readonly SignInRepository signInRepository;
 
-        public AccountController(UserRepository userRepository)
+        public AccountController(UserRepository userRepository, SignInRepository signInRepository)
         {
             this.userRepository = userRepository;
+            this.signInRepository = signInRepository;
         }
 
         [HttpPost(Endpoints.Account + "createaccount")]
@@ -31,5 +33,33 @@ namespace MusicMatch_Server.Controllers
                 Email = newUserdbo.Email,
             });
         }
+
+        [HttpPost(Endpoints.Account + "signin")]
+        public async Task<ObjectResult> SignIn(Requests.SignIn request)
+        {
+            if (request == null)
+            {
+                return NoRequest();
+            }
+
+            IEnumerable<string>? result = await signInRepository.SignIn(request.Credential, request.Password).ConfigureAwait(false);
+
+            if (result == null)
+            {
+                return Unauthorized("Unable to log in user.");
+            }
+
+            return Ok(new Responses.SignedInUser {
+                role = result
+            });
+        }
+
+        [HttpPost(Endpoints.Account + "signout")]
+        public async Task<ObjectResult> SignOut()
+        {
+            await signInRepository.SignOut().ConfigureAwait(false);
+            return NoContent();
+        }
+
     }
 }
