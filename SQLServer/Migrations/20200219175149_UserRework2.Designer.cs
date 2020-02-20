@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SQLServer;
 
 namespace SQLServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200219175149_UserRework2")]
+    partial class UserRework2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,17 +50,17 @@ namespace SQLServer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "077e6e45-0f4e-4015-83ae-fbd73c626c66",
-                            ConcurrencyStamp = "968968ba-07af-4c21-a56a-18cffe2d90bf",
+                            Id = "077eae59-37e0-4b63-99ea-f176babd86aa",
+                            ConcurrencyStamp = "1b8d4580-62ab-4e9d-ba8a-08e1dc5b5510",
                             Name = "artist",
                             NormalizedName = "ARTIST"
                         },
                         new
                         {
-                            Id = "a68b8b19-d1dd-4090-8368-a82dfda1a4fb",
-                            ConcurrencyStamp = "2036ddd5-a4e4-430b-9775-7a21e56d4c83",
-                            Name = "events manager",
-                            NormalizedName = "EVENTS MANAGER"
+                            Id = "f61c6910-02c1-4a10-a787-2ec4d5a1a774",
+                            ConcurrencyStamp = "33d8b334-1bca-4fde-9d24-5dcbc34bd6ef",
+                            Name = "eventsManager",
+                            NormalizedName = "EVENTSMANAGER"
                         });
                 });
 

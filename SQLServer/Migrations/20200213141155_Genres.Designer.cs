@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SQLServer;
 
 namespace SQLServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200213141155_Genres")]
+    partial class Genres
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,17 +50,17 @@ namespace SQLServer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "077e6e45-0f4e-4015-83ae-fbd73c626c66",
-                            ConcurrencyStamp = "968968ba-07af-4c21-a56a-18cffe2d90bf",
+                            Id = "ca5f7a0a-3cf0-4dbb-9744-d4e8530bb47c",
+                            ConcurrencyStamp = "16360e40-3048-403a-b858-1a958b8707e2",
                             Name = "artist",
                             NormalizedName = "ARTIST"
                         },
                         new
                         {
-                            Id = "a68b8b19-d1dd-4090-8368-a82dfda1a4fb",
-                            ConcurrencyStamp = "2036ddd5-a4e4-430b-9775-7a21e56d4c83",
-                            Name = "events manager",
-                            NormalizedName = "EVENTS MANAGER"
+                            Id = "b225f899-effa-4fff-a5a0-ca38cba839ba",
+                            ConcurrencyStamp = "5ab162b9-9070-4f2a-8546-f8de091bad3a",
+                            Name = "eventsManager",
+                            NormalizedName = "EVENTSMANAGER"
                         });
                 });
 
@@ -303,37 +305,6 @@ namespace SQLServer.Migrations
                     b.ToTable("UserGenre");
                 });
 
-            modelBuilder.Entity("SQLServer.Models.UserVenueDbo", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("VenueId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "VenueId");
-
-                    b.HasIndex("VenueId");
-
-                    b.ToTable("UserVenue");
-                });
-
-            modelBuilder.Entity("SQLServer.Models.VenueDbo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Venues");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -396,21 +367,6 @@ namespace SQLServer.Migrations
                     b.HasOne("SQLServer.Models.ApplicationUserDbo", "AssociatedUser")
                         .WithMany("Genres")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("SQLServer.Models.UserVenueDbo", b =>
-                {
-                    b.HasOne("SQLServer.Models.ApplicationUserDbo", "AssociatedUser")
-                        .WithMany("Venues")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SQLServer.Models.VenueDbo", "Venue")
-                        .WithMany("AssociatedUsers")
-                        .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

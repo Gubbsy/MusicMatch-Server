@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -40,11 +41,19 @@ namespace MusicMatch_Server
 
             services.AddScoped<TestRepository>();
             services.AddScoped<UserRepository>();
+            services.AddScoped<SignInRepository>();
 
             services.AddIdentity<ApplicationUserDbo, IdentityRole>(options =>
             {
                 options.Password.RequiredLength = 8;
             }).AddEntityFrameworkStores<AppDbContext>();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.HttpOnly = true;
+                options.SlidingExpiration = true;
+            });
 
             services.AddControllers(options =>
             {
@@ -65,11 +74,13 @@ namespace MusicMatch_Server
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHsts();
-
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
+
             app.UseRouting();
+
+            app.UseOptions();
 
             app.UseAuthorization();
 
