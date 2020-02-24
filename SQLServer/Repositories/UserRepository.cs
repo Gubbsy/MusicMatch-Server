@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SQLServer.Exceptions;
+using System.Collections.Generic;
 
 namespace SQLServer.Repositories
 { 
@@ -19,6 +20,21 @@ namespace SQLServer.Repositories
             this.appDbContext = appDbContext;
         }
 
+        //Get Account Account
+
+        public async Task<ApplicationUserDbo> GetUserAccount(string username) 
+        {
+            try
+            {
+                return await appDbContext.Users.FirstOrDefaultAsync(u => u.UserName == username).ConfigureAwait(false);
+            }
+            catch (Exception e) 
+            { 
+                throw new RepositoryException("Unable to retirve user");
+            }
+        }
+        
+        //Create Account
         public async Task<ApplicationUserDbo> Register(string accountRole, string username, string email, string password) 
         {
             accountRole = accountRole.ToUpper();
@@ -75,12 +91,53 @@ namespace SQLServer.Repositories
                 transaction.Commit();
             }
 
-             return await appDbContext.Users.FirstOrDefaultAsync(u => u.UserName == newUser.UserName);
+             return await GetUserAccount(newUser.UserName);
         }
 
+        //Update Account Details
+        public async Task UpdateAccountDetails(string username, string[] genres, string[] venues, string name, string bio, string lookingFor, int matchRadius, double lat, double lon)
+        {
+            ApplicationUserDbo user = await GetUserAccount(username);
+
+            if (user == null) 
+            {
+                throw new RepositoryException("Unable to find associated user to update");
+            }
+
+            user.Name = name;
+            user.Bio = bio;
+            user.LookingFor = lookingFor;
+            user.Lat = lat;
+            user.Lon = lon;
+            user.MatchRadius = matchRadius;
+
+            using (var transaction = appDbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    await GenreAdditions(genres, user);
+                    await VenueAdditions(venues, user);
+                    appDbContext.Users.Update(user);
+                    appDbContext.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    throw new RepositoryException(e.Message, e);
+                }
+            } 
+        }
+
+
+
+        //Add Genres
         public async Task<GenreDbo> GenreAdditions(string[] genres, ApplicationUserDbo user) 
         {
             GenreDbo genreDbo = null;
+
+            IEnumerable<UserGenreDbo> g = await appDbContext.UserGenre
+                .Include(ug => ug.AssociatedUser)
+                .Where(ug => ug.AssociatedUser.Id == user.Id).ToListAsync();
+            appDbContext.UserGenre.RemoveRange(g);
 
             foreach (string genre in genres)
             {
@@ -95,7 +152,7 @@ namespace SQLServer.Repositories
                     {
                         appDbContext.Genres.Add(genreDbo);
                     }
-                    catch (InvalidOperationException e)
+                    catch (Exception e)
                     {
                         throw new RepositoryException(e.Message);
                     }
@@ -104,6 +161,7 @@ namespace SQLServer.Repositories
                 {
                     genreDbo = await appDbContext.Genres.FirstOrDefaultAsync(g => g.Name == genre);
                 }
+         
 
                 UserGenreDbo userGenreDbo = new UserGenreDbo
                 {
@@ -116,21 +174,26 @@ namespace SQLServer.Repositories
                 try
                 {
                     appDbContext.UserGenre.Add(userGenreDbo);
+                    await appDbContext.SaveChangesAsync().ConfigureAwait(false);
                 }
-                catch
+                catch (Exception e)
                 {
-                    throw new RepositoryException("Unable to add GENRE(S)");
+                    throw new RepositoryException(e.Message, e);
                 }
             }
-
-            await appDbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return genreDbo;
         }
 
+        //Add Venues
         public async Task<VenueDbo> VenueAdditions(string[] venues, ApplicationUserDbo user)
         {
             VenueDbo venueDbo = null;
+
+            IEnumerable<UserVenueDbo> v = await appDbContext.UserVenue
+                .Include(uv => uv.AssociatedUser)
+                .Where(uv => uv.AssociatedUser.Id == user.Id).ToListAsync();
+            appDbContext.UserVenue.RemoveRange(v);
 
             foreach (string venue in venues)
             {
@@ -166,14 +229,13 @@ namespace SQLServer.Repositories
                 try
                 {
                     appDbContext.UserVenue.Add(userVenueDbo);
+                    await appDbContext.SaveChangesAsync().ConfigureAwait(false);
                 }
                 catch
                 {
                     throw new RepositoryException("Unable to add VENUE(S)");
                 }
             }
-
-            await appDbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return venueDbo;
         }

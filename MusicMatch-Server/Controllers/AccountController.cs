@@ -61,5 +61,17 @@ namespace MusicMatch_Server.Controllers
             return NoContent();
         }
 
+        [HttpPost(Endpoints.Account + "updateaccountdetails")]
+        public async Task<ObjectResult> UpdateAccountDetails(Requests.UpdateAccountDetails request) 
+        {
+            if (request == null)
+            {
+                return NoRequest();
+            }
+
+           await userRepository.UpdateAccountDetails(request.username, request.Genres, request.Venues, request.Name, request.Bio, request.LookingFor, request.MatchRadius, request.Lat, request.Lon).ConfigureAwait(false);
+
+            return NoContent();
+        }
     }
 }
