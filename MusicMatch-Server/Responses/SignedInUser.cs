@@ -7,6 +7,6 @@ namespace MusicMatch_Server.Responses
 {
     public class SignedInUser
     {
-        public IEnumerable<string> role { get; set; }
+        public IEnumerable<string> AccountRole { get; set; }
     }
 }

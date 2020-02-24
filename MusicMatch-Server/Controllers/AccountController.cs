@@ -50,7 +50,7 @@ namespace MusicMatch_Server.Controllers
             }
 
             return Ok(new Responses.SignedInUser {
-                role = result
+                AccountRole = result
             });
         }
 
@@ -72,6 +72,29 @@ namespace MusicMatch_Server.Controllers
            await userRepository.UpdateAccountDetails(request.username, request.Genres, request.Venues, request.Name, request.Bio, request.LookingFor, request.MatchRadius, request.Lat, request.Lon).ConfigureAwait(false);
 
             return NoContent();
+        }
+
+        [HttpPost(Endpoints.Account + "getaccountdetails")]
+        public async Task<ObjectResult> GetAccountDetails(Requests.GetAccountDetails request) 
+        {
+            if (request == null)
+            {
+                return NoRequest();
+            }
+
+            ApplicationUserDbo user = await userRepository.GetUserAccount(request.Username);
+
+            return Ok(new Responses.AccountDetails
+            {
+                Name = user.Name,
+                Bio = user.Bio,
+                LookingFor = user.LookingFor,
+                Lat = user.Lat,
+                Lon = user.Lon,
+                MatchRadius = user.MatchRadius,
+                Genres = user.Genres.Select(ug => ug.Genre.Name).ToArray(),
+                Venues = user.Venues.Select(uv => uv.Venue.Name).ToArray()
+            }) ;
         }
     }
 }

@@ -26,7 +26,12 @@ namespace SQLServer.Repositories
         {
             try
             {
-                return await appDbContext.Users.FirstOrDefaultAsync(u => u.UserName == username).ConfigureAwait(false);
+                return await appDbContext.Users
+                    .Include(u => u.Genres)
+                        .ThenInclude(g => g.Genre)
+                    .Include(u => u.Venues)
+                        .ThenInclude(v => v.Venue)
+                    .FirstOrDefaultAsync(u => u.UserName == username).ConfigureAwait(false);
             }
             catch (Exception e) 
             { 
