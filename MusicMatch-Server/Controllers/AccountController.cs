@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SQLServer.Exceptions;
 using SQLServer.Models;
@@ -44,7 +44,7 @@ namespace MusicMatch_Server.Controllers
 
             if (role == null)
             {
-                return Unauthorized("Unable to log in user.");
+                return Unauthorized("Incorrect Username or Password");
             }
 
             return NoContent();
