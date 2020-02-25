@@ -43,6 +43,8 @@ namespace MusicMatch_Server
             services.AddScoped<UserRepository>();
             services.AddScoped<SignInRepository>();
 
+            services.AddSingleton<HttpContextAccessor, HttpContextAccessor>();
+
             services.AddIdentity<ApplicationUserDbo, IdentityRole>(options =>
             {
                 options.Password.RequiredLength = 8;

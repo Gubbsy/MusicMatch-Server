@@ -7,7 +7,6 @@ namespace MusicMatch_Server.Requests
 {
     public class UpdateAccountDetails
     {
-        public string username{ get; set; }
         public string[] Genres { get; set; }
         public string[] Venues { get; set; }    
         public string Name { get; set; }

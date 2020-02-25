@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using SQLServer.Exceptions;
 using SQLServer.Models;
 using SQLServer.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace MusicMatch_Server.Controllers
@@ -14,24 +16,20 @@ namespace MusicMatch_Server.Controllers
     {
         private readonly UserRepository userRepository;
         private readonly SignInRepository signInRepository;
+        private readonly HttpContextAccessor httpContextAccessor;
 
-        public AccountController(UserRepository userRepository, SignInRepository signInRepository)
+        public AccountController(UserRepository userRepository, SignInRepository signInRepository, HttpContextAccessor httpContextAccessor)
         {
             this.userRepository = userRepository;
             this.signInRepository = signInRepository;
+            this.httpContextAccessor = httpContextAccessor;
         }
 
         [HttpPost(Endpoints.Account + "createaccount")]
-        public async Task<ObjectResult> CreateTest(Requests.CreateAccount createAccount)
+        public async Task<ObjectResult> CreateTest(Requests.CreateAccount request)
         {
-            ApplicationUserDbo newUserdbo = await userRepository.Register(createAccount.AccountRole, createAccount.Username, createAccount.Email.ToLower(), createAccount.Password);
-            return Ok(new Responses.NewUser
-            {
-                Id = newUserdbo.Id,
-                AccountRole = createAccount.AccountRole,
-                Username = newUserdbo.UserName,
-                Email = newUserdbo.Email,
-            });
+            await userRepository.Register(request.AccountRole, request.Username, request.Email.ToLower(), request.Password);
+            return NoContent();
         }
 
         [HttpPost(Endpoints.Account + "signin")]
@@ -42,16 +40,14 @@ namespace MusicMatch_Server.Controllers
                 return NoRequest();
             }
 
-            IEnumerable<string>? result = await signInRepository.SignIn(request.Credential, request.Password).ConfigureAwait(false);
+            IEnumerable<string>? role = await signInRepository.SignIn(request.Credential, request.Password).ConfigureAwait(false);
 
-            if (result == null)
+            if (role == null)
             {
                 return Unauthorized("Unable to log in user.");
             }
 
-            return Ok(new Responses.SignedInUser {
-                AccountRole = result
-            });
+            return NoContent();
         }
 
         [HttpPost(Endpoints.Account + "signout")]
@@ -69,20 +65,18 @@ namespace MusicMatch_Server.Controllers
                 return NoRequest();
             }
 
-           await userRepository.UpdateAccountDetails(request.username, request.Genres, request.Venues, request.Name, request.Bio, request.LookingFor, request.MatchRadius, request.Lat, request.Lon).ConfigureAwait(false);
+            string userId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            await userRepository.UpdateAccountDetails(userId, request.Genres, request.Venues, request.Name, request.Bio, request.LookingFor, request.MatchRadius, request.Lat, request.Lon).ConfigureAwait(false);
 
             return NoContent();
         }
 
         [HttpPost(Endpoints.Account + "getaccountdetails")]
-        public async Task<ObjectResult> GetAccountDetails(Requests.GetAccountDetails request) 
+        public async Task<ObjectResult> GetAccountDetails() 
         {
-            if (request == null)
-            {
-                return NoRequest();
-            }
-
-            ApplicationUserDbo user = await userRepository.GetUserAccount(request.Username);
+            string userId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            ApplicationUserDbo user = await userRepository.GetUserAccount(userId);
 
             return Ok(new Responses.AccountDetails
             {

@@ -20,9 +20,9 @@ namespace SQLServer.Repositories
             this.appDbContext = appDbContext;
         }
 
-        //Get Account Account
+        //Get Account Details
 
-        public async Task<ApplicationUserDbo> GetUserAccount(string username) 
+        public async Task<ApplicationUserDbo> GetUserAccount(string userId) 
         {
             try
             {
@@ -31,7 +31,7 @@ namespace SQLServer.Repositories
                         .ThenInclude(g => g.Genre)
                     .Include(u => u.Venues)
                         .ThenInclude(v => v.Venue)
-                    .FirstOrDefaultAsync(u => u.UserName == username).ConfigureAwait(false);
+                    .FirstOrDefaultAsync(u => u.Id == userId).ConfigureAwait(false);
             }
             catch (Exception e) 
             { 
@@ -40,7 +40,7 @@ namespace SQLServer.Repositories
         }
         
         //Create Account
-        public async Task<ApplicationUserDbo> Register(string accountRole, string username, string email, string password) 
+        public async Task Register(string accountRole, string username, string email, string password) 
         {
             accountRole = accountRole.ToUpper();
             accountRole = Utils.ValidatorService.CheckRoleExists(accountRole) ?? throw new RepositoryException("Role " + accountRole + " does not exist");
@@ -95,14 +95,12 @@ namespace SQLServer.Repositories
 
                 transaction.Commit();
             }
-
-             return await GetUserAccount(newUser.UserName);
         }
 
         //Update Account Details
-        public async Task UpdateAccountDetails(string username, string[] genres, string[] venues, string name, string bio, string lookingFor, int matchRadius, double lat, double lon)
+        public async Task UpdateAccountDetails(string userId, string[] genres, string[] venues, string name, string bio, string lookingFor, int matchRadius, double lat, double lon)
         {
-            ApplicationUserDbo user = await GetUserAccount(username);
+            ApplicationUserDbo user = await GetUserAccount(userId);
 
             if (user == null) 
             {
@@ -129,6 +127,8 @@ namespace SQLServer.Repositories
                 {
                     throw new RepositoryException(e.Message, e);
                 }
+
+                transaction.Commit();
             } 
         }
 
