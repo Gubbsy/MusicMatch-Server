@@ -12,5 +12,13 @@ namespace MusicMatch_Server.Controllers
         //Account
 
         public const string Account = Base + "account/";
+
+        // Genres
+
+        public const string Genres = Base + "genres/";
+
+        // Venues
+
+        public const string Venues = Base + "Venues/";
     }
 }

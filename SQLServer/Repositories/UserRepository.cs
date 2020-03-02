@@ -5,33 +5,58 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SQLServer.Exceptions;
+using System.Collections.Generic;
 
 namespace SQLServer.Repositories
-{ 
+{
     public class UserRepository
     {
         private readonly UserManager<ApplicationUserDbo> userManager;
         private readonly AppDbContext appDbContext;
+        private readonly VenueRepository venueRepository;
+        private readonly GenreRepository genreRepository;
 
-        public UserRepository(UserManager<ApplicationUserDbo> userManager, AppDbContext appDbContext)
+        public UserRepository(UserManager<ApplicationUserDbo> userManager, AppDbContext appDbContext, VenueRepository venueRepository, GenreRepository genreRepository)
         {
             this.userManager = userManager;
             this.appDbContext = appDbContext;
+            this.venueRepository = venueRepository;
+            this.genreRepository = genreRepository;
         }
 
-        public async Task<ApplicationUserDbo> Register(string accountRole, string username, string email, string password) 
+        //Get Account Details
+
+        public async Task<ApplicationUserDbo> GetUserAccount(string userId)
+        {
+            try
+            {
+                return await appDbContext.Users
+                    .Include(u => u.Genres)
+                        .ThenInclude(g => g.Genre)
+                    .Include(u => u.Venues)
+                        .ThenInclude(v => v.Venue)
+                    .FirstOrDefaultAsync(u => u.Id == userId).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                throw new RepositoryException("Unable to retirve user", e);
+            }
+        }
+
+        //Create Account
+        public async Task Register(string accountRole, string username, string email, string password)
         {
             accountRole = accountRole.ToUpper();
             accountRole = Utils.ValidatorService.CheckRoleExists(accountRole) ?? throw new RepositoryException("Role " + accountRole + " does not exist");
             username = Utils.ValidatorService.CheckIsEmpty(username) ?? throw new RepositoryException("USERNAME cannot be empty or null");
             email = Utils.ValidatorService.CheckIsEmpty(email) ?? throw new RepositoryException("EMAIL cannot be empty or null");
             password = Utils.ValidatorService.CheckIsEmpty(password) ?? throw new RepositoryException("PASSWORD cannot be empty or null");
-   
+
 
 
             if ((await appDbContext.Users.CountAsync(u => u.UserName == username)) != 0)
             {
-                throw new RepositoryException(nameof(username) + " value needs to be unique" );
+                throw new RepositoryException(nameof(username) + " value needs to be unique");
             }
 
             if ((await appDbContext.Users.CountAsync(u => u.Email == email)) != 0)
@@ -51,7 +76,7 @@ namespace SQLServer.Repositories
                 MatchRadius = 100
             };
 
-            using (var transaction = appDbContext.Database.BeginTransaction()) 
+            using (var transaction = appDbContext.Database.BeginTransaction())
             {
                 IdentityResult identityResult = await userManager.CreateAsync(newUser, password).ConfigureAwait(false);
 
@@ -74,108 +99,41 @@ namespace SQLServer.Repositories
 
                 transaction.Commit();
             }
-
-             return await appDbContext.Users.FirstOrDefaultAsync(u => u.UserName == newUser.UserName);
         }
 
-        public async Task<GenreDbo> GenreAdditions(string[] genres, ApplicationUserDbo user) 
+        //Update Account Details
+        public async Task UpdateAccountDetails(string userId, string[] genres, string[] venues, string name, string bio, string lookingFor, int matchRadius, double lat, double lon)
         {
-            GenreDbo genreDbo = null;
+            ApplicationUserDbo user = await GetUserAccount(userId);
 
-            foreach (string genre in genres)
+            if (user == null)
             {
-                if ((await appDbContext.Genres.CountAsync(g => g.Name == genre)) == 0)
-                {
-                    genreDbo = new GenreDbo
-                    {
-                        Name = genre
-                    };
-
-                    try
-                    {
-                        appDbContext.Genres.Add(genreDbo);
-                    }
-                    catch (InvalidOperationException e)
-                    {
-                        throw new RepositoryException(e.Message);
-                    }
-                }
-                else 
-                {
-                    genreDbo = await appDbContext.Genres.FirstOrDefaultAsync(g => g.Name == genre);
-                }
-
-                UserGenreDbo userGenreDbo = new UserGenreDbo
-                {
-                    UserId = user.Id,
-                    AssociatedUser = user,
-                    GenreId = genreDbo.Id,
-                    Genre = genreDbo
-                };
-
-                try
-                {
-                    appDbContext.UserGenre.Add(userGenreDbo);
-                }
-                catch
-                {
-                    throw new RepositoryException("Unable to add GENRE(S)");
-                }
+                throw new RepositoryException("Unable to find associated user to update");
             }
 
-            await appDbContext.SaveChangesAsync().ConfigureAwait(false);
+            user.Name = name;
+            user.Bio = bio;
+            user.LookingFor = lookingFor;
+            user.Lat = lat;
+            user.Lon = lon;
+            user.MatchRadius = matchRadius;
 
-            return genreDbo;
-        }
-
-        public async Task<VenueDbo> VenueAdditions(string[] venues, ApplicationUserDbo user)
-        {
-            VenueDbo venueDbo = null;
-
-            foreach (string venue in venues)
+            using (var transaction = appDbContext.Database.BeginTransaction())
             {
-                if ((await appDbContext.Venues.CountAsync(v => v.Name == venue)) == 0)
-                {
-                    venueDbo = new VenueDbo
-                    {
-                        Name = venue
-                    };
-
-                    try
-                    {
-                        appDbContext.Venues.Add(venueDbo);
-                    }
-                    catch (InvalidOperationException e)
-                    {
-                        throw new RepositoryException(e.Message);
-                    }
-                }
-                else
-                {
-                    venueDbo = await appDbContext.Venues.FirstOrDefaultAsync(v => v.Name == venue);
-                }
-
-                UserVenueDbo userVenueDbo = new UserVenueDbo
-                {
-                    UserId = user.Id,
-                    AssociatedUser = user,
-                    VenueId = venueDbo.Id,
-                    Venue = venueDbo
-                };
-
                 try
                 {
-                    appDbContext.UserVenue.Add(userVenueDbo);
+                    await genreRepository.GenreAdditions(genres, user);
+                    await venueRepository.VenueAdditions(venues, user);
+                    appDbContext.Users.Update(user);
+                    appDbContext.SaveChanges();
                 }
-                catch
+                catch (Exception e)
                 {
-                    throw new RepositoryException("Unable to add VENUE(S)");
+                    throw new RepositoryException(e.Message, e);
                 }
+
+                transaction.Commit();
             }
-
-            await appDbContext.SaveChangesAsync().ConfigureAwait(false);
-
-            return venueDbo;
         }
     }
 }
