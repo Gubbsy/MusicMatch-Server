@@ -15,10 +15,10 @@ namespace SQLServer.Repositories
     {
         private readonly UserManager<ApplicationUserDbo> userManager;
         private readonly AppDbContext appDbContext;
-        private readonly VenueRepository venueRepository;
-        private readonly GenreRepository genreRepository;
+        private readonly IVenueRepository venueRepository;
+        private readonly IGenreRepository genreRepository;
 
-        public UserRepository(UserManager<ApplicationUserDbo> userManager, AppDbContext appDbContext, VenueRepository venueRepository, GenreRepository genreRepository)
+        public UserRepository(UserManager<ApplicationUserDbo> userManager, AppDbContext appDbContext, IVenueRepository venueRepository, IGenreRepository genreRepository)
         {
             this.userManager = userManager;
             this.appDbContext = appDbContext;

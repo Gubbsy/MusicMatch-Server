@@ -1,4 +1,5 @@
 ﻿using Abstraction.Models;
+using Abstraction.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using SQLServer.Models;
 using SQLServer.Repositories;
@@ -11,9 +12,9 @@ namespace MusicMatch_Server.Controllers
 {
     public class VenueControlller : APIControllerBase
     {
-        private readonly VenueRepository venueRepository;
+        private readonly IVenueRepository venueRepository;
 
-        public VenueControlller(VenueRepository venueRepository)
+        public VenueControlller(IVenueRepository venueRepository)
         {
             this.venueRepository = venueRepository;
         }
