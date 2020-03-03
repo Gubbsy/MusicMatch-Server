@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Abstraction.Models;
+using Abstraction.Repositories;
+using Microsoft.EntityFrameworkCore;
 using SQLServer.Exceptions;
 using SQLServer.Models;
 using System;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SQLServer.Repositories
 {
-    public class VenueRepository
+    public class VenueRepository : IVenueRepository
     {
         private readonly AppDbContext appDbContext;
 
@@ -18,7 +20,7 @@ namespace SQLServer.Repositories
             this.appDbContext = appDbContext;
         }
 
-        public async Task<IEnumerable<VenueDbo>> GetAllVenues() 
+        public async Task<IEnumerable<Venue>> GetAllVenues() 
         {
             try
             {
@@ -32,7 +34,7 @@ namespace SQLServer.Repositories
         }
 
         //Add Venues
-        public async Task VenueAdditions(string[] venues, ApplicationUserDbo user)
+        public async Task VenueAdditions(string[] venues, ApplicationUser user)
         {
             VenueDbo venueDbo = null;
 
@@ -67,7 +69,7 @@ namespace SQLServer.Repositories
                 UserVenueDbo userVenueDbo = new UserVenueDbo
                 {
                     UserId = user.Id,
-                    AssociatedUser = user,
+                    AssociatedUser = (ApplicationUserDbo)user,
                     VenueId = venueDbo.Id,
                     Venue = venueDbo
                 };

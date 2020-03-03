@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Abstraction.Models;
+using Microsoft.AspNetCore.Mvc;
 using SQLServer.Models;
 using SQLServer.Repositories;
 using System;
@@ -20,7 +21,7 @@ namespace MusicMatch_Server.Controllers
         [HttpPost(Endpoints.Venues + "getallvenues")]
         public async Task<ObjectResult> GetAllVenues()
         {
-            IEnumerable<VenueDbo> venueDbos = await venueRepository.GetAllVenues();
+            IEnumerable<Venue> venueDbos = await venueRepository.GetAllVenues();
 
             return Ok(new Responses.AllVenues
             {

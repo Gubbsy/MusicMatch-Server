@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SQLServer.Exceptions;
 using System.Collections.Generic;
+using Abstraction.Repositories;
+using Abstraction.Models;
 
 namespace SQLServer.Repositories
 {
-    public class UserRepository
+    public class UserRepository : IUserRepository
     {
         private readonly UserManager<ApplicationUserDbo> userManager;
         private readonly AppDbContext appDbContext;
@@ -26,16 +28,17 @@ namespace SQLServer.Repositories
 
         //Get Account Details
 
-        public async Task<ApplicationUserDbo> GetUserAccount(string userId)
+        public async Task<ApplicationUser> GetUserAccount(string userId)
         {
             try
             {
-                return await appDbContext.Users
+              return await appDbContext.Users
                     .Include(u => u.Genres)
                         .ThenInclude(g => g.Genre)
                     .Include(u => u.Venues)
                         .ThenInclude(v => v.Venue)
                     .FirstOrDefaultAsync(u => u.Id == userId).ConfigureAwait(false);
+
             }
             catch (Exception e)
             {
@@ -104,7 +107,7 @@ namespace SQLServer.Repositories
         //Update Account Details
         public async Task UpdateAccountDetails(string userId, string[] genres, string[] venues, string name, string bio, string lookingFor, int matchRadius, double lat, double lon)
         {
-            ApplicationUserDbo user = await GetUserAccount(userId);
+            ApplicationUserDbo user = (ApplicationUserDbo)await GetUserAccount(userId);
 
             if (user == null)
             {

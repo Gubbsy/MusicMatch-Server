@@ -1,3 +1,4 @@
+using Abstraction.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SQLServer.Exceptions;
@@ -15,10 +16,10 @@ namespace MusicMatch_Server.Controllers
     public class AccountController : APIControllerBase
     {
         private readonly UserRepository userRepository;
-        private readonly SignInRepository signInRepository;
+        private readonly ISignInRepository signInRepository;
         private readonly HttpContextAccessor httpContextAccessor;
 
-        public AccountController(UserRepository userRepository, SignInRepository signInRepository, HttpContextAccessor httpContextAccessor)
+        public AccountController(UserRepository userRepository, ISignInRepository signInRepository, HttpContextAccessor httpContextAccessor)
         {
             this.userRepository = userRepository;
             this.signInRepository = signInRepository;
@@ -26,7 +27,7 @@ namespace MusicMatch_Server.Controllers
         }
 
         [HttpPost(Endpoints.Account + "createaccount")]
-        public async Task<ObjectResult> CreateTest(Requests.CreateAccount request)
+        public async Task<ObjectResult> CreateAccount(Requests.CreateAccount request)
         {
             await userRepository.Register(request.AccountRole, request.Username, request.Email.ToLower(), request.Password);
             return NoContent();
@@ -76,7 +77,7 @@ namespace MusicMatch_Server.Controllers
         public async Task<ObjectResult> GetAccountDetails() 
         {
             string userId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            ApplicationUserDbo user = await userRepository.GetUserAccount(userId);
+            ApplicationUserDbo user = (ApplicationUserDbo)await userRepository.GetUserAccount(userId);
 
             return Ok(new Responses.AccountDetails
             {

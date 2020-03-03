@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SQLServer.Repositories;
+using Abstraction.Models;
 
 namespace MusicMatch_Server.Controllers
 {
@@ -21,7 +22,7 @@ namespace MusicMatch_Server.Controllers
         [HttpPost(Endpoints.Genres + "getallgenres")]
         public async Task<ObjectResult> GetAllGenres() {
 
-            IEnumerable<GenreDbo> genreDbos = await genreRespository.GetAllGenres();
+            IEnumerable<Genre> genreDbos = await genreRespository.GetAllGenres();
 
             return Ok(new Responses.AllGenres
             {

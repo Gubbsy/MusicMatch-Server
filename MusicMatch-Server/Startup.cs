@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Abstraction.Repositories;
 using API.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -39,9 +40,8 @@ namespace MusicMatch_Server
         {
             services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DBConnection")));
 
-            services.AddScoped<TestRepository>();
             services.AddScoped<UserRepository>();
-            services.AddScoped<SignInRepository>();
+            services.AddScoped<ISignInRepository, SignInRepository>();
             services.AddScoped<GenreRepository>();
             services.AddScoped<VenueRepository>();
 
