@@ -22,12 +22,12 @@ namespace MusicMatch_Server.Controllers
         [HttpPost(Endpoints.Venues + "getallvenues")]
         public async Task<ObjectResult> GetAllVenues()
         {
-            IEnumerable<Venue> venueDbos = await venueRepository.GetAllVenues();
+            IEnumerable<Venue> venues = await venueRepository.GetAllVenues();
 
             return Ok(new Responses.AllVenues
             {
-                Venues = venueDbos.Select(v => v.Name).ToArray()
-            }); ;
+                Venues = venues.Select(v => v.Name).ToArray()
+            }); 
         }
     }
 }

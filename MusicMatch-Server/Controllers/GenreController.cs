@@ -23,11 +23,11 @@ namespace MusicMatch_Server.Controllers
         [HttpPost(Endpoints.Genres + "getallgenres")]
         public async Task<ObjectResult> GetAllGenres() {
 
-            IEnumerable<Genre> genreDbos = await genreRespository.GetAllGenres();
+            IEnumerable<Genre> genres = await genreRespository.GetAllGenres();
 
             return Ok(new Responses.AllGenres
             {
-                Genres = genreDbos.Select(g => g.Name).ToArray()
+                Genres = genres.Select(g => g.Name).ToArray()
             }) ;
         }
 
