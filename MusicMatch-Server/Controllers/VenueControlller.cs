@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Abstraction.Models;
+using Abstraction.Repositories;
+using Microsoft.AspNetCore.Mvc;
 using SQLServer.Models;
 using SQLServer.Repositories;
 using System;
@@ -10,9 +12,9 @@ namespace MusicMatch_Server.Controllers
 {
     public class VenueControlller : APIControllerBase
     {
-        private readonly VenueRepository venueRepository;
+        private readonly IVenueRepository venueRepository;
 
-        public VenueControlller(VenueRepository venueRepository)
+        public VenueControlller(IVenueRepository venueRepository)
         {
             this.venueRepository = venueRepository;
         }
@@ -20,12 +22,12 @@ namespace MusicMatch_Server.Controllers
         [HttpPost(Endpoints.Venues + "getallvenues")]
         public async Task<ObjectResult> GetAllVenues()
         {
-            IEnumerable<VenueDbo> venueDbos = await venueRepository.GetAllVenues();
+            IEnumerable<Venue> venues = await venueRepository.GetAllVenues();
 
             return Ok(new Responses.AllVenues
             {
-                Venues = venueDbos.Select(v => v.Name).ToArray()
-            }); ;
+                Venues = venues.Select(v => v.Name).ToArray()
+            }); 
         }
     }
 }

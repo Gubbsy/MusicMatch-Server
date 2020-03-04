@@ -11,7 +11,7 @@ namespace SQLServer
         //  Properties
         //  ==========
 
-        public DbSet<TestDbo> Testdbos { get; set; }
+
         public DbSet<GenreDbo> Genres { get; set; }
         public DbSet<VenueDbo> Venues { get; set; }
         public DbSet<UserGenreDbo> UserGenre { get; set; }
@@ -47,9 +47,6 @@ namespace SQLServer
 
             modelBuilder.Entity<UserVenueDbo>()
             .HasKey(ug => new { ug.UserId, ug.VenueId });
-
-            modelBuilder.Entity<TestDbo>()
-                .HasKey(t => t.Id);
 
             modelBuilder.Entity<GenreDbo>()
                 .HasKey(g => g.Id);

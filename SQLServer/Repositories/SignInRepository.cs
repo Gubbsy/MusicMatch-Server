@@ -7,10 +7,11 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Abstraction.Repositories;
 
 namespace SQLServer.Repositories
 {
-    public class SignInRepository
+    public class SignInRepository : ISignInRepository
     {
 
         private readonly SignInManager<ApplicationUserDbo> signInManager;

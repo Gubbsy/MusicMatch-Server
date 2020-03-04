@@ -1,15 +1,17 @@
-﻿using System;
+﻿using Abstraction.Models;
+using System.Linq;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace SQLServer.Models
 {
-    public class UserVenueDbo
+    public class UserVenueDbo : UserVenue
     {
-        public int VenueId { get; set; }
-        public VenueDbo Venue { get; set; }
+        public new int VenueId { get => base.VenueId; set => base.VenueId = value; }
+        public new VenueDbo Venue { get => (VenueDbo)base.Venue; set => base.Venue = value; }
 
-        public string UserId { get; set; }
-        public ApplicationUserDbo AssociatedUser { get; set; }
+        public new string UserId { get; set; }
+        public new ApplicationUserDbo AssociatedUser { get; set; }
     }
 }

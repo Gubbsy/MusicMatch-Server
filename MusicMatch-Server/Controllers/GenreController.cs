@@ -5,15 +5,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SQLServer.Repositories;
+using Abstraction.Models;
+using Abstraction.Repositories;
 
 namespace MusicMatch_Server.Controllers
 {
     [ApiController]
     public class GenreController : APIControllerBase
     {
-        private readonly GenreRepository genreRespository;
+        private readonly IGenreRepository genreRespository;
 
-        public GenreController(GenreRepository genreRespository)
+        public GenreController(IGenreRepository genreRespository)
         {
             this.genreRespository = genreRespository;
         }
@@ -21,11 +23,11 @@ namespace MusicMatch_Server.Controllers
         [HttpPost(Endpoints.Genres + "getallgenres")]
         public async Task<ObjectResult> GetAllGenres() {
 
-            IEnumerable<GenreDbo> genreDbos = await genreRespository.GetAllGenres();
+            IEnumerable<Genre> genres = await genreRespository.GetAllGenres();
 
             return Ok(new Responses.AllGenres
             {
-                Genres = genreDbos.Select(g => g.Name).ToArray()
+                Genres = genres.Select(g => g.Name).ToArray()
             }) ;
         }
 

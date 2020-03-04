@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Abstraction.Models;
+using Abstraction.Repositories;
+using Microsoft.EntityFrameworkCore;
 using SQLServer.Exceptions;
 using SQLServer.Models;
 using System;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SQLServer.Repositories
 {
-   public class GenreRepository
+   public class GenreRepository : IGenreRepository
     {
         private readonly AppDbContext appDbContext;
 
@@ -17,8 +19,8 @@ namespace SQLServer.Repositories
         {
             this.appDbContext = appDbContext;
         }
-
-        public async Task<IEnumerable<GenreDbo>> GetAllGenres() 
+        
+        public async Task<IEnumerable<Genre>> GetAllGenres() 
         { 
             try
             {
@@ -31,7 +33,7 @@ namespace SQLServer.Repositories
         }
 
         //Add Genres
-        public async Task GenreAdditions(string[] genres, ApplicationUserDbo user)
+        public async Task GenreAdditions(string[] genres, ApplicationUser user)
         {
             GenreDbo genreDbo = null;
 
@@ -67,7 +69,7 @@ namespace SQLServer.Repositories
                 UserGenreDbo userGenreDbo = new UserGenreDbo
                 {
                     UserId = user.Id,
-                    AssociatedUser = user,
+                    AssociatedUser = (ApplicationUserDbo)user,
                     GenreId = genreDbo.Id,
                     Genre = genreDbo
                 };

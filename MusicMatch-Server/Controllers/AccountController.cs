@@ -1,5 +1,9 @@
+using Abstraction.Models;
+using Abstraction.Repositories;
+using Abstraction.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MusicMatch_Server.Services;
 using SQLServer.Exceptions;
 using SQLServer.Models;
 using SQLServer.Repositories;
@@ -14,20 +18,25 @@ namespace MusicMatch_Server.Controllers
     [ApiController]
     public class AccountController : APIControllerBase
     {
-        private readonly UserRepository userRepository;
-        private readonly SignInRepository signInRepository;
-        private readonly HttpContextAccessor httpContextAccessor;
+        private readonly IUserRepository userRepository;
+        private readonly ISignInRepository signInRepository;
+        private readonly ISessionService sesionService;
 
-        public AccountController(UserRepository userRepository, SignInRepository signInRepository, HttpContextAccessor httpContextAccessor)
+        public AccountController(IUserRepository userRepository, ISignInRepository signInRepository, ISessionService sesionService)
         {
             this.userRepository = userRepository;
             this.signInRepository = signInRepository;
-            this.httpContextAccessor = httpContextAccessor;
+            this.sesionService = sesionService;
         }
 
         [HttpPost(Endpoints.Account + "createaccount")]
-        public async Task<ObjectResult> CreateTest(Requests.CreateAccount request)
+        public async Task<ObjectResult> CreateAccount(Requests.CreateAccount request)
         {
+            if (request == null)
+            {
+                return NoRequest();
+            }
+
             await userRepository.Register(request.AccountRole, request.Username, request.Email.ToLower(), request.Password);
             return NoContent();
         }
@@ -65,7 +74,7 @@ namespace MusicMatch_Server.Controllers
                 return NoRequest();
             }
 
-            string userId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            string userId = sesionService.GetCurrentUserId();
 
             await userRepository.UpdateAccountDetails(userId, request.Genres, request.Venues, request.Name, request.Bio, request.LookingFor, request.MatchRadius, request.Lat, request.Lon).ConfigureAwait(false);
 
@@ -75,8 +84,8 @@ namespace MusicMatch_Server.Controllers
         [HttpPost(Endpoints.Account + "getaccountdetails")]
         public async Task<ObjectResult> GetAccountDetails() 
         {
-            string userId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            ApplicationUserDbo user = await userRepository.GetUserAccount(userId);
+            string userId = sesionService.GetCurrentUserId();
+            ApplicationUser user = await userRepository.GetUserAccount(userId);
 
             return Ok(new Responses.AccountDetails
             {
