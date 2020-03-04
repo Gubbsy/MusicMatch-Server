@@ -19,6 +19,10 @@ namespace MusicMatch_Server.Controllers
 
         // Venues
 
-        public const string Venues = Base + "Venues/";
+        public const string Venues = Base + "venues/";
+
+        // Suggestions
+
+        public const string Suggestions = Base + "suggestions/";
     }
 }
