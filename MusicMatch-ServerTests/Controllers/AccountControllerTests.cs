@@ -106,7 +106,7 @@ namespace MusicMatch_Server.Controllers.Tests
         }
 
         [Fact()]
-        public async Task SignInTest_SignInRepository_SignInIsCalledOnce()
+        public async Task SignInTest_SignInRepository_SignIn_IsCalledOnce()
         {
             Requests.SignIn request = new Requests.SignIn
             {
@@ -131,7 +131,7 @@ namespace MusicMatch_Server.Controllers.Tests
         }
 
         [Fact()]
-        public async void SignOut_SignInRepository_SignOutIsCalldOnce()
+        public async void SignOut_SignInRepository_SignOut_IsCalldOnce()
         {
             signInRepository.Setup(x => x.SignOut());
             ObjectResult result = await subject.SignOut();
@@ -173,7 +173,7 @@ namespace MusicMatch_Server.Controllers.Tests
         }
 
         [Fact()]
-        public async void UpdateAccountDetails_UserRepository_UpdateAccountDetailsIsCalledOnce()
+        public async void UpdateAccountDetails_UserRepository_UpdateAccountDetails_IsCalledOnce()
         {
             string userId = "Test-ID";
             Requests.UpdateAccountDetails request = new Requests.UpdateAccountDetails
@@ -201,21 +201,8 @@ namespace MusicMatch_Server.Controllers.Tests
         {
             string userId = "Test-ID";
 
-            Mock<Genre> genre = new Mock<Genre>();
-            Mock<Venue> venue = new Mock<Venue>();
-
-            List<UserGenre> genres = new List<UserGenre>();
-            List<UserVenue> venues = new List<UserVenue>();
-
-
-            Mock<UserGenre> userGenre = new Mock<UserGenre>();
-            genre.SetupGet(x => x.Name).Returns("Rock");
-            genres.Add(userGenre.Object);
-
-            Mock<UserVenue> userVenue = new Mock<UserVenue>();
-            venue.SetupGet(x => x.Name).Returns("Blue Hut");
-            venues.Add(userVenue.Object);
-            
+            List<UserGenre> genres = new List<UserGenre>() { };
+            List<UserVenue> venues = new List<UserVenue>() { };
 
             ApplicationUser returnedUser = new ApplicationUser
             {
@@ -237,6 +224,61 @@ namespace MusicMatch_Server.Controllers.Tests
             Assert.Equal(200, result.StatusCode);
         }
 
+        [Fact()]
+        public async void GetAccountDetailsTest_SessionService_GetCurrenUserID_IsCalledOnce()
+        {
+            string userId = "Test-ID";
+
+            List<UserGenre> genres = new List<UserGenre>() { };
+            List<UserVenue> venues = new List<UserVenue>() { };
+
+            ApplicationUser returnedUser = new ApplicationUser
+            {
+                Genres = genres,
+                Venues = venues,
+                Name = "Test Name",
+                Bio = "Test Bio",
+                LookingFor = "Test Looking For",
+                Lat = 50,
+                Lon = 23,
+                MatchRadius = 40,
+            };
+
+            sessionService.Setup(x => x.GetCurrentUserId()).Returns(userId);
+            userRepository.Setup(x => x.GetUserAccount(It.IsAny<string>())).ReturnsAsync(returnedUser);
+
+            ObjectResult result = await subject.GetAccountDetails();
+
+            sessionService.Verify(x => x.GetCurrentUserId(), Times.Once);
+        }
+
+        [Fact()]
+        public async void GetAccountDetailsTest_UserRepository_GetUserAccount_IsCalledOnce()
+        {
+            string userId = "Test-ID";
+
+            List<UserGenre> genres = new List<UserGenre>() { };
+            List<UserVenue> venues = new List<UserVenue>() { };
+
+            ApplicationUser returnedUser = new ApplicationUser
+            {
+                Genres = genres,
+                Venues = venues,
+                Name = "Test Name",
+                Bio = "Test Bio",
+                LookingFor = "Test Looking For",
+                Lat = 50,
+                Lon = 23,
+                MatchRadius = 40,
+            };
+
+            sessionService.Setup(x => x.GetCurrentUserId()).Returns(userId);
+            userRepository.Setup(x => x.GetUserAccount(It.IsAny<string>())).ReturnsAsync(returnedUser);
+
+            ObjectResult result = await subject.GetAccountDetails();
+
+            userRepository.Verify(x => x.GetUserAccount(userId), Times.Once);
+        }
 
     }
 }
