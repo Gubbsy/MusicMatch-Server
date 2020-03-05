@@ -15,22 +15,40 @@ namespace MusicMatch_Server.Controllers
     {
         private readonly IUserRepository userRepository;
         private readonly ISessionService sessionService;
+        private readonly ISuggestionsRepository suggestionsRepository;
 
-        public SuggestionsController(IUserRepository userRepository, ISessionService sessionService)
+        public SuggestionsController(IUserRepository userRepository, ISessionService sessionService, ISuggestionsRepository suggestionsRepository)
         {
             this.userRepository = userRepository;
             this.sessionService = sessionService;
+            this.suggestionsRepository = suggestionsRepository;
         }
 
         [HttpPost(Endpoints.Suggestions + "getsuggestions")]
-        public async Task<ObjectResult> GetSuggestions() 
+        public async Task<ObjectResult> GetSuggestions()
         {
             string userId = sessionService.GetCurrentUserId();
             ApplicationUser user = await userRepository.GetUserAccount(userId);
 
             CoordinateBoundaries boundaries = new CoordinateBoundaries(user.Lat, user.Lon, user.MatchRadius, DistanceUnit.Kilometers);
 
-            return NoContent();
+            IEnumerable<ApplicationUser> matchesInRadius = await suggestionsRepository.GetUsersInMatchRadius(boundaries.MinLatitude, boundaries.MaxLatitude, boundaries.MinLongitude, boundaries.MaxLongitude);
+
+            IEnumerable<SuggestedUser> suggestedUsers = matchesInRadius.Select(x => new SuggestedUser
+            {
+                Id  = x.Id,
+                Name = x.Name,
+                Bio = x.Bio,
+                LookingFor = x.LookingFor,
+                Genres = x.Genres.Select(ug => ug.Genre.Name).ToArray(),
+                Venues = x.Venues.Select(uv => uv.Venue.Name).ToArray(),
+                Distance = GeoCalculator.GetDistance(user.Lat, user.Lon, x.Lat, x.Lon)
+            })
+                .Where(x => x.Id != user.Id)
+                .Where(x => x.Distance <= user.MatchRadius)
+                .OrderBy(x => x.Distance);
+
+            return Ok(suggestedUsers);
         }
     }
 }

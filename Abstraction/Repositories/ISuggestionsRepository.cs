@@ -8,6 +8,6 @@ namespace Abstraction.Repositories
 {
     public interface ISuggestionsRepository
     {
-        public Task<IEnumerable<ApplicationUser>> GetUsersInMatchRadius(double maxLat, double maxLon);
+        public Task<IEnumerable<ApplicationUser>> GetUsersInMatchRadius(double minLat, double maxLat, double minLon, double maxLon);
     }
 }
