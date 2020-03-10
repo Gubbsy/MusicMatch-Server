@@ -14,10 +14,12 @@ namespace SQLServer.Repositories
     public class SuggestionsRepository : ISuggestionsRepository
     {
         private readonly AppDbContext appDbContext;
+        private readonly IUserRepository userRepository;
 
-        public SuggestionsRepository(AppDbContext appDbContext)
+        public SuggestionsRepository(AppDbContext appDbContext, IUserRepository userRepository)
         {
             this.appDbContext = appDbContext;
+            this.userRepository = userRepository;
         }
 
         public async Task<IEnumerable<ApplicationUser>> GetUsersInMatchRadius(double minLat, double maxLat, double minLon, double maxLon)
@@ -57,7 +59,9 @@ namespace SQLServer.Repositories
                     appDbContext.Introductions.Add(intro);
                     await appDbContext.SaveChangesAsync().ConfigureAwait(false);
 
-                    if (requested == true && appDbContext.Introductions.Any(i => i.UId2 == i.UId1) && appDbContext.Introductions.Any(i => i.Requested == true))
+                    Introductions introduction = await appDbContext.Introductions.FirstOrDefaultAsync(i => i.UId1 == uId2 && i.UId2 == uId1);
+
+                    if (requested == true && introduction != null && introduction.Requested == true)
                     {
                         await AddMatch(uId1, uId2);
                         matched = true;
@@ -66,7 +70,7 @@ namespace SQLServer.Repositories
                 }
                 catch (Exception e)
                 {
-                    throw new RepositoryException("Unable to process suggestion choice", e);
+                    throw new RepositoryException("Unable to process response to sugestions", e);
                 }
 
                 transaction.Commit();
@@ -91,8 +95,25 @@ namespace SQLServer.Repositories
             }
             catch (Exception e)
             {
-                throw new RepositoryException("Unable to process suggestion choice", e);
+                throw new RepositoryException("Unable to add match", e);
             }
+        }
+
+        public IEnumerable<string> GetPreviousSuggestions(string userId)
+        {
+            List<string> previouseSuggestionIds = new List<string>();
+
+            try
+            {
+                IEnumerable<Introductions> previouseIntroductions = appDbContext.Introductions.Where(i => i.UId1 == userId);
+                previouseSuggestionIds =  previouseIntroductions.Select(x => x.UId2).ToList();
+            }
+            catch (Exception e)
+            {
+                throw new RepositoryException("Unabl to retieve previouse matches", e);
+            }
+
+            return previouseSuggestionIds;
         }
     }
 }
