@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Geolocation;
+using MusicMatch_Server.Responses;
 
 namespace MusicMatch_Server.Controllers
 {
@@ -48,7 +49,21 @@ namespace MusicMatch_Server.Controllers
                 .Where(x => x.Distance <= user.MatchRadius)
                 .OrderBy(x => x.Distance);
 
-            return Ok(suggestedUsers);
+            return Ok(new SuggestedUsers() {
+                suggestedUsers = suggestedUsers
+            });
         }
+
+        [HttpPost(Endpoints.Suggestions + "respondtosuggestion")]
+        public async Task<ObjectResult> RespondToSuggestion()
+        {
+
+
+            return Ok(new Matched()
+            {
+                DidMatch = true
+            });
+        }
+
     }
 }
