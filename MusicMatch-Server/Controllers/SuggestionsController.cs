@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Geolocation;
+using MusicMatch_Server.Responses;
 
 namespace MusicMatch_Server.Controllers
 {
@@ -34,6 +35,8 @@ namespace MusicMatch_Server.Controllers
 
             IEnumerable<ApplicationUser> matchesInRadius = await suggestionsRepository.GetUsersInMatchRadius(boundaries.MinLatitude, boundaries.MaxLatitude, boundaries.MinLongitude, boundaries.MaxLongitude);
 
+            IEnumerable<string> previouslyRespondedSuggestionsIds = suggestionsRepository.GetPreviousSuggestions(userId);
+
             IEnumerable<SuggestedUser> suggestedUsers = matchesInRadius.Select(x => new SuggestedUser
             {
                 Id  = x.Id,
@@ -45,10 +48,26 @@ namespace MusicMatch_Server.Controllers
                 Distance = GeoCalculator.GetDistance(user.Lat, user.Lon, x.Lat, x.Lon)
             })
                 .Where(x => x.Id != user.Id)
+                .Where(x =>!previouslyRespondedSuggestionsIds.Contains(x.Id))
                 .Where(x => x.Distance <= user.MatchRadius)
                 .OrderBy(x => x.Distance);
 
-            return Ok(suggestedUsers);
+            return Ok(new SuggestedUsers() {
+                suggestedUsers = suggestedUsers
+            });
+        }
+
+        [HttpPost(Endpoints.Suggestions + "respondtosuggestion")]
+        public async Task<ObjectResult> RespondToSuggestion(Requests.ResponseToSuggestion request)
+        {
+            string userId = sessionService.GetCurrentUserId();
+
+            bool didMatch = await this.suggestionsRepository.AddIntroduction(userId, request.SuggestedUserId, request.requestMatch);
+
+            return Ok(new Matched()
+            {
+                DidMatch = didMatch
+            }) ;
         }
     }
 }

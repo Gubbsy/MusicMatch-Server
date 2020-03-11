@@ -8,6 +8,7 @@ using Abstraction.Services;
 using Moq;
 using Abstraction.Models;
 using Microsoft.AspNetCore.Mvc;
+using MusicMatch_Server.Requests;
 
 namespace MusicMatch_Server.Controllers.Tests
 {
@@ -35,8 +36,8 @@ namespace MusicMatch_Server.Controllers.Tests
             List<UserGenre> genres = new List<UserGenre>() { };
             List<UserVenue> venues = new List<UserVenue>() { };
 
-            ApplicationUser user = new ApplicationUser() 
-            { 
+            ApplicationUser user = new ApplicationUser()
+            {
                 Id = "Test-ID",
                 Email = "Test@email.com",
                 Name = "Test-Name",
@@ -47,7 +48,7 @@ namespace MusicMatch_Server.Controllers.Tests
                 Lon = 4.1427,
                 MatchRadius = 50,
                 Genres = genres,
-                Venues = venues,        
+                Venues = venues,
             };
 
             List<ApplicationUser> matchesInRadius = new List<ApplicationUser>() { new ApplicationUser()
@@ -63,7 +64,7 @@ namespace MusicMatch_Server.Controllers.Tests
                     MatchRadius = 50,
                     Genres = genres,
                     Venues = venues,
-                }, 
+                },
                 new ApplicationUser()
                 {
                     Id = "Returned2-ID",
@@ -84,7 +85,7 @@ namespace MusicMatch_Server.Controllers.Tests
             userRepository.Setup(x => x.GetUserAccount(It.IsAny<string>())).ReturnsAsync(user);
             suggesionsRepository.Setup(x => x.GetUsersInMatchRadius(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>())).ReturnsAsync(matchesInRadius);
 
-            ObjectResult result =  await subject.GetSuggestions();
+            ObjectResult result = await subject.GetSuggestions();
 
             Assert.Equal(200, result.StatusCode);
         }
@@ -274,6 +275,63 @@ namespace MusicMatch_Server.Controllers.Tests
             ObjectResult result = await subject.GetSuggestions();
 
             suggesionsRepository.Verify(x => x.GetUsersInMatchRadius(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>()), Times.Once);
+        }
+
+        [Fact()]
+        public async void RespondToSuggestion_AlwaysReturnsA200()
+        {
+            string userId = "Test-ID";
+
+            ResponseToSuggestion request = new ResponseToSuggestion() {
+                requestMatch = true,
+                SuggestedUserId = "Test-Suggested-Id"
+            };
+
+            sessionService.Setup(x => x.GetCurrentUserId()).Returns(userId);
+            suggesionsRepository.Setup(x => x.AddIntroduction(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>())).ReturnsAsync(true);
+
+            ObjectResult result = await subject.RespondToSuggestion(request);
+
+            Assert.Equal(200, result.StatusCode);
+        }
+
+
+        [Fact()]
+        public async void RespondToSuggestion_SessionService_IsCalledOnce()
+        {
+            string userId = "Test-ID";
+
+            ResponseToSuggestion request = new ResponseToSuggestion()
+            {
+                requestMatch = true,
+                SuggestedUserId = "Test-Suggested-Id"
+            };
+
+            sessionService.Setup(x => x.GetCurrentUserId()).Returns(userId);
+            suggesionsRepository.Setup(x => x.AddIntroduction(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>())).ReturnsAsync(true);
+
+            ObjectResult result = await subject.RespondToSuggestion(request);
+
+            sessionService.Verify(x => x.GetCurrentUserId(), Times.Once);
+        }
+
+        [Fact()]
+        public async void RespondToSuggestion_SessionRepository_AddIntroduction_IsCalledOnce()
+        {
+            string userId = "Test-ID";
+
+            ResponseToSuggestion request = new ResponseToSuggestion()
+            {
+                requestMatch = true,
+                SuggestedUserId = "Test-Suggested-Id"
+            };
+
+            sessionService.Setup(x => x.GetCurrentUserId()).Returns(userId);
+            suggesionsRepository.Setup(x => x.AddIntroduction(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>())).ReturnsAsync(true);
+
+            ObjectResult result = await subject.RespondToSuggestion(request);
+
+            suggesionsRepository.Verify(x => x.AddIntroduction(userId, request.SuggestedUserId, request.requestMatch), Times.Once);
         }
     }
 }

@@ -16,6 +16,8 @@ namespace SQLServer
         public DbSet<VenueDbo> Venues { get; set; }
         public DbSet<UserGenreDbo> UserGenre { get; set; }
         public DbSet<UserVenueDbo> UserVenue { get; set; }
+        public DbSet<IntroductionsDbo> Introductions { get; set; }
+        public DbSet<MatchesDbo> Matches { get; set; }
 
         //  Constructors
         //  ============
@@ -53,6 +55,12 @@ namespace SQLServer
 
             modelBuilder.Entity<VenueDbo>()
                 .HasKey(v => v.Id);
+
+            modelBuilder.Entity<IntroductionsDbo>()
+                .HasKey(i => i.Id);
+
+            modelBuilder.Entity<MatchesDbo>()
+               .HasKey(m => m.Id);
         }
 
         private void SetUpManyToManyRelationships(ModelBuilder modelBuilder)
