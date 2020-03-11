@@ -52,9 +52,7 @@ namespace MusicMatch_Server.Controllers
                 .Where(x => x.Distance <= user.MatchRadius)
                 .OrderBy(x => x.Distance);
 
-            return Ok(new SuggestedUsers() {
-                suggestedUsers = suggestedUsers
-            });
+            return Ok(suggestedUsers);
         }
 
         [HttpPost(Endpoints.Suggestions + "respondtosuggestion")]
