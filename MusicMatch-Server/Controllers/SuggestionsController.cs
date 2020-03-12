@@ -35,11 +35,13 @@ namespace MusicMatch_Server.Controllers
 
             IEnumerable<ApplicationUser> matchesInRadius = await suggestionsRepository.GetUsersInMatchRadius(boundaries.MinLatitude, boundaries.MaxLatitude, boundaries.MinLongitude, boundaries.MaxLongitude);
 
-            IEnumerable<string> previouslyRespondedSuggestionsIds = suggestionsRepository.GetPreviousSuggestions(userId);
+            IEnumerable<ApplicationUser> previouslyRespondedSuggestions = await suggestionsRepository.GetPreviousSuggestions(userId);
 
-            IEnumerable<SuggestedUser> suggestedUsers = matchesInRadius.Select(x => new SuggestedUser
+            IEnumerable<ApplicationUser> unmatchedSuggestiosn = matchesInRadius.Where(x => !previouslyRespondedSuggestions.Contains(x));
+
+            IEnumerable<SuggestedUser> suggestedUsers = unmatchedSuggestiosn.Select(x => new SuggestedUser
             {
-                Id  = x.Id,
+                Id = x.Id,
                 Name = x.Name,
                 Bio = x.Bio,
                 LookingFor = x.LookingFor,
@@ -48,7 +50,6 @@ namespace MusicMatch_Server.Controllers
                 Distance = GeoCalculator.GetDistance(user.Lat, user.Lon, x.Lat, x.Lon)
             })
                 .Where(x => x.Id != user.Id)
-                .Where(x =>!previouslyRespondedSuggestionsIds.Contains(x.Id))
                 .Where(x => x.Distance <= user.MatchRadius)
                 .OrderBy(x => x.Distance);
 

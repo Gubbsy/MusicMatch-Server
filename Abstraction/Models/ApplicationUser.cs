@@ -14,6 +14,7 @@ namespace Abstraction.Models
         public string LookingFor { get; set; }
         public IEnumerable<UserGenre> Genres { get; set; }
         public IEnumerable<UserVenue> Venues { get; set; }
+        public IEnumerable<Match> Matches { get; set; }
         public int MatchRadius { get; set; }
     }
 }

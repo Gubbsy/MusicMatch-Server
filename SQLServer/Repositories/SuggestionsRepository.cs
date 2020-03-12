@@ -44,6 +44,9 @@ namespace SQLServer.Repositories
 
             bool matched = false;
 
+            ApplicationUser sender = await userRepository.GetUserAccount(uId1);
+            ApplicationUser recipient = await userRepository.GetUserAccount(uId2);
+
             using (var transaction = appDbContext.Database.BeginTransaction())
             {
 
@@ -51,19 +54,19 @@ namespace SQLServer.Repositories
                 {
                     IntroductionsDbo intro = new IntroductionsDbo()
                     {
-                        Requested = requested,
-                        UId1 = uId1,
-                        UId2 = uId2
+                        DidRequest = requested,
+                        Sender = sender,
+                        Recipient = recipient
                     };
 
                     appDbContext.Introductions.Add(intro);
                     await appDbContext.SaveChangesAsync().ConfigureAwait(false);
 
-                    Introductions introduction = await appDbContext.Introductions.FirstOrDefaultAsync(i => i.UId1 == uId2 && i.UId2 == uId1);
+                    Introduction introduction = await appDbContext.Introductions.FirstOrDefaultAsync(i => i.Sender == recipient && i.Recipient == sender);
 
-                    if (requested == true && introduction != null && introduction.Requested == true)
+                    if (requested == true && introduction != null && introduction.DidRequest == true)
                     {
-                        await AddMatch(uId1, uId2);
+                        await AddMatch(sender, recipient);
                         matched = true;
                     }
 
@@ -79,18 +82,28 @@ namespace SQLServer.Repositories
             return matched;
         }
         
-        public async Task AddMatch(string uId1, string uId2) 
+        private async Task AddMatch(ApplicationUser user, ApplicationUser matcher) 
         {
             try
             {
-                MatchesDbo match = new MatchesDbo()
+                // Add matches both ways rond so only one column needs to be quried to return a list of a users matches. 
+
+                MatchDbo newMatch1 = new MatchDbo()
                 {
-                    UId1 = uId1,
-                    UId2 = uId2,
+                    User = (ApplicationUserDbo)user,
+                    Matcher = (ApplicationUserDbo)matcher,
                     MatchDate = DateTime.Now
                 };
 
-                appDbContext.Matches.Add(match);
+                MatchDbo newMatch2 = new MatchDbo()
+                {
+                    User = (ApplicationUserDbo)matcher,
+                    Matcher = (ApplicationUserDbo)user,
+                    MatchDate = DateTime.Now
+                };
+
+                appDbContext.Matches.Add(newMatch1);
+                appDbContext.Matches.Add(newMatch2);
                 await appDbContext.SaveChangesAsync().ConfigureAwait(false);
             }
             catch (Exception e)
@@ -99,21 +112,27 @@ namespace SQLServer.Repositories
             }
         }
 
-        public IEnumerable<string> GetPreviousSuggestions(string userId)
+        public async Task<IEnumerable<ApplicationUser>> GetPreviousSuggestions(string userId)
         {
-            List<string> previouseSuggestionIds = new List<string>();
+            List<ApplicationUser> previouseSuggestion = new List<ApplicationUser>();
+
+            ApplicationUser user = await userRepository.GetUserAccount(userId);
 
             try
             {
-                IEnumerable<Introductions> previouseIntroductions = appDbContext.Introductions.Where(i => i.UId1 == userId);
-                previouseSuggestionIds =  previouseIntroductions.Select(x => x.UId2).ToList();
+                IEnumerable<Introduction> previouseIntroductions = appDbContext.Introductions.Where(i => i.Sender == user);
+
+                foreach (Introduction introduction in previouseIntroductions)
+                {
+                    previouseSuggestion.Add(introduction.Recipient);
+                }
             }
             catch (Exception e)
             {
                 throw new RepositoryException("Unabl to retieve previouse matches", e);
             }
 
-            return previouseSuggestionIds;
+            return previouseSuggestion;
         }
     }
 }

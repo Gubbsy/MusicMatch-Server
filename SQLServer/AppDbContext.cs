@@ -17,7 +17,8 @@ namespace SQLServer
         public DbSet<UserGenreDbo> UserGenre { get; set; }
         public DbSet<UserVenueDbo> UserVenue { get; set; }
         public DbSet<IntroductionsDbo> Introductions { get; set; }
-        public DbSet<MatchesDbo> Matches { get; set; }
+        public DbSet<MatchDbo> Matches { get; set; }
+        public DbSet<ApplicationUserDbo> applicationUsers { get; set; }
 
         //  Constructors
         //  ============
@@ -59,7 +60,7 @@ namespace SQLServer
             modelBuilder.Entity<IntroductionsDbo>()
                 .HasKey(i => i.Id);
 
-            modelBuilder.Entity<MatchesDbo>()
+            modelBuilder.Entity<MatchDbo>()
                .HasKey(m => m.Id);
         }
 
@@ -88,6 +89,9 @@ namespace SQLServer
 
         private void SetUpOneToManyRelationships(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ApplicationUserDbo>()
+                .HasMany(m => m.Matches)
+                .WithOne(a => a.User);
         }
 
         private void SeedRoles(ModelBuilder modelBuilder)

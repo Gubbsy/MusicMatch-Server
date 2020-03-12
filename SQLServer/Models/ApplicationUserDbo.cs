@@ -16,6 +16,7 @@ namespace SQLServer.Models
         public new string LookingFor { get => base.LookingFor; set => base.LookingFor = value; }
         public new IEnumerable<UserGenreDbo> Genres { get => base.Genres.Cast<UserGenreDbo>(); set => base.Genres = value.Cast<UserGenre>(); }
         public new IEnumerable<UserVenueDbo> Venues { get => base.Venues.Cast<UserVenueDbo>(); set => base.Venues = value.Cast<UserVenue>(); }
+        public new IEnumerable<MatchDbo> Matches { get => base.Matches.Cast<MatchDbo>(); set => base.Matches = value; }
         public new int MatchRadius { get => base.MatchRadius; set => base.MatchRadius = value; }
     }
 }
