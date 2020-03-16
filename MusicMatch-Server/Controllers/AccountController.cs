@@ -1,10 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Abstraction.Models;
+using Abstraction.Repositories;
+using Abstraction.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using MusicMatch_Server.Services;
 using SQLServer.Exceptions;
 using SQLServer.Models;
 using SQLServer.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace MusicMatch_Server.Controllers
@@ -12,26 +18,27 @@ namespace MusicMatch_Server.Controllers
     [ApiController]
     public class AccountController : APIControllerBase
     {
-        private readonly UserRepository userRepository;
-        private readonly SignInRepository signInRepository;
+        private readonly IUserRepository userRepository;
+        private readonly ISignInRepository signInRepository;
+        private readonly ISessionService sesionService;
 
-        public AccountController(UserRepository userRepository, SignInRepository signInRepository)
+        public AccountController(IUserRepository userRepository, ISignInRepository signInRepository, ISessionService sesionService)
         {
             this.userRepository = userRepository;
             this.signInRepository = signInRepository;
+            this.sesionService = sesionService;
         }
 
         [HttpPost(Endpoints.Account + "createaccount")]
-        public async Task<ObjectResult> CreateTest(Requests.CreateAccount createAccount)
+        public async Task<ObjectResult> CreateAccount(Requests.CreateAccount request)
         {
-            ApplicationUserDbo newUserdbo = await userRepository.Register(createAccount.AccountRole, createAccount.Username, createAccount.Email.ToLower(), createAccount.Password);
-            return Ok(new Responses.NewUser
+            if (request == null)
             {
-                Id = newUserdbo.Id,
-                AccountRole = createAccount.AccountRole,
-                Username = newUserdbo.UserName,
-                Email = newUserdbo.Email,
-            });
+                return NoRequest();
+            }
+
+            await userRepository.Register(request.AccountRole, request.Username, request.Email.ToLower(), request.Password);
+            return NoContent();
         }
 
         [HttpPost(Endpoints.Account + "signin")]
@@ -42,16 +49,14 @@ namespace MusicMatch_Server.Controllers
                 return NoRequest();
             }
 
-            IEnumerable<string>? result = await signInRepository.SignIn(request.Credential, request.Password).ConfigureAwait(false);
+            IEnumerable<string>? role = await signInRepository.SignIn(request.Credential, request.Password).ConfigureAwait(false);
 
-            if (result == null)
+            if (role == null)
             {
-                return Unauthorized("Unable to log in user.");
+                return Unauthorized("Incorrect Username or Password");
             }
 
-            return Ok(new Responses.SignedInUser {
-                role = result
-            });
+            return NoContent();
         }
 
         [HttpPost(Endpoints.Account + "signout")]
@@ -61,5 +66,38 @@ namespace MusicMatch_Server.Controllers
             return NoContent();
         }
 
+        [HttpPost(Endpoints.Account + "updateaccountdetails")]
+        public async Task<ObjectResult> UpdateAccountDetails(Requests.UpdateAccountDetails request) 
+        {
+            if (request == null)
+            {
+                return NoRequest();
+            }
+
+            string userId = sesionService.GetCurrentUserId();
+
+            await userRepository.UpdateAccountDetails(userId, request.Genres, request.Venues, request.Name, request.Bio, request.LookingFor, request.MatchRadius, request.Lat, request.Lon).ConfigureAwait(false);
+
+            return NoContent();
+        }
+
+        [HttpPost(Endpoints.Account + "getaccountdetails")]
+        public async Task<ObjectResult> GetAccountDetails() 
+        {
+            string userId = sesionService.GetCurrentUserId();
+            ApplicationUser user = await userRepository.GetUserAccount(userId);
+
+            return Ok(new Responses.AccountDetails
+            {
+                Name = user.Name,
+                Bio = user.Bio,
+                LookingFor = user.LookingFor,
+                Lat = user.Lat,
+                Lon = user.Lon,
+                MatchRadius = user.MatchRadius,
+                Genres = user.Genres.Select(ug => ug.Genre.Name).ToArray(),
+                Venues = user.Venues.Select(uv => uv.Venue.Name).ToArray()
+            }) ;
+        }
     }
 }

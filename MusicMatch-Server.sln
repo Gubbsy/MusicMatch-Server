@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicMatch-Server", "MusicM
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SQLServer", "SQLServer\SQLServer.csproj", "{31349F63-EF6D-4E82-808E-B0336C95E3A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstraction", "Abstraction\Abstraction.csproj", "{A36D2411-74AB-47B3-8E6F-8A355C3E34C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abstraction", "Abstraction\Abstraction.csproj", "{A36D2411-74AB-47B3-8E6F-8A355C3E34C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicMatch-ServerTests", "MusicMatch-ServerTests\MusicMatch-ServerTests.csproj", "{B86469A3-DC39-47EC-B0F8-86475A239AAD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{A36D2411-74AB-47B3-8E6F-8A355C3E34C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A36D2411-74AB-47B3-8E6F-8A355C3E34C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A36D2411-74AB-47B3-8E6F-8A355C3E34C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B86469A3-DC39-47EC-B0F8-86475A239AAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B86469A3-DC39-47EC-B0F8-86475A239AAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B86469A3-DC39-47EC-B0F8-86475A239AAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B86469A3-DC39-47EC-B0F8-86475A239AAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

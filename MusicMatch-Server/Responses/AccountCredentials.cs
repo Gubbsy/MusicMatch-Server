@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MusicMatch_Server.Responses
 {
-    public class NewUser
+    public class AccountCredentials
     {
         public string Id { get; set; }
         public string AccountRole { get; set; }

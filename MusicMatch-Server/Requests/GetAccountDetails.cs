@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace MusicMatch_Server.Requests
 {
-    public class CreateTest
+    public class GetAccountDetails
     {
-        public string Name { get; set; }
-        public string FavCheese { get; set; }
+        public string Username { get; set; }
     }
 }

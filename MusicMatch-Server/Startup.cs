@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Abstraction.Repositories;
+using Abstraction.Services;
 using API.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -17,6 +19,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MusicMatch_Server.FIlters;
 using MusicMatch_Server.Responses;
+using MusicMatch_Server.Services;
 using Newtonsoft.Json;
 using SQLServer;
 using SQLServer.Exceptions;
@@ -39,9 +42,14 @@ namespace MusicMatch_Server
         {
             services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DBConnection")));
 
-            services.AddScoped<TestRepository>();
-            services.AddScoped<UserRepository>();
-            services.AddScoped<SignInRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ISignInRepository, SignInRepository>();
+            services.AddScoped<IGenreRepository, GenreRepository>();
+            services.AddScoped<IVenueRepository, VenueRepository>();
+            services.AddScoped<ISuggestionsRepository, SuggestionsRepository>();
+            services.AddScoped<ISessionService, SessionService>();
+
+            services.AddSingleton<HttpContextAccessor, HttpContextAccessor>();
 
             services.AddIdentity<ApplicationUserDbo, IdentityRole>(options =>
             {
@@ -61,7 +69,7 @@ namespace MusicMatch_Server
             })
             .ConfigureApiBehaviorOptions(options =>
             {
-                options.SuppressModelStateInvalidFilter = true;
+               options.SuppressModelStateInvalidFilter = true;
             });
         }
 

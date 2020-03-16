@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace MusicMatch_Server.Responses
 {
-    public class SignedInUser
+    public class AllGenres
     {
-        public IEnumerable<string> AccountRole { get; set; }
+        public string[] Genres { get; set; }
     }
 }

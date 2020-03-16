@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MusicMatch_Server.Requests
+namespace MusicMatch_Server.Responses
 {
-    public class CheeseTest
+    public class AllVenues
     {
-        public string Cheese { get; set; }
-
+        public string[] Venues { get; set; }
     }
 }

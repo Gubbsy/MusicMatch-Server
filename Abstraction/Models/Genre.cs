@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SQLServer.Models
+namespace Abstraction.Models
 {
-    public class TestDbo
+    public class Genre
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string FavCheese { get; set; }
+        public IEnumerable<UserGenre> AssociatedUsers { get; set; }
     }
 }
