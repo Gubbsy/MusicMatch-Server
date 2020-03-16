@@ -13,5 +13,6 @@ namespace Abstraction.Models
         public string LookingFor { get; set; }
         public string[] Genres { get; set; }
         public string[] Venues { get; set; }
+        public string Role { get; set; }
     }
 }

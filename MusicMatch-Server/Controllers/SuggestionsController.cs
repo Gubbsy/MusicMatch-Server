@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Geolocation;
 using MusicMatch_Server.Responses;
+using Microsoft.EntityFrameworkCore;
 
 namespace MusicMatch_Server.Controllers
 {
@@ -39,18 +40,23 @@ namespace MusicMatch_Server.Controllers
 
             IEnumerable<SuggestedUser> suggestedUsers = matchesInRadius.Select(x => new SuggestedUser
             {
-                Id  = x.Id,
+                Id = x.Id,
                 Name = x.Name,
                 Bio = x.Bio,
                 LookingFor = x.LookingFor,
                 Genres = x.Genres.Select(ug => ug.Genre.Name).ToArray(),
                 Venues = x.Venues.Select(uv => uv.Venue.Name).ToArray(),
                 Distance = GeoCalculator.GetDistance(user.Lat, user.Lon, x.Lat, x.Lon)
-            })
+            }).ToList()
                 .Where(x => x.Id != user.Id)
                 .Where(x =>!previouslyRespondedSuggestionsIds.Contains(x.Id))
                 .Where(x => x.Distance <= user.MatchRadius)
                 .OrderBy(x => x.Distance);
+
+            foreach (SuggestedUser u in suggestedUsers)
+            {
+                u.Role = await userRepository.GetAcountRole(u.Id);
+            }
 
             return Ok(suggestedUsers);
         }
