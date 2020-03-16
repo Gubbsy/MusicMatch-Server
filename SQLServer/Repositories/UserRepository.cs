@@ -26,6 +26,28 @@ namespace SQLServer.Repositories
             this.genreRepository = genreRepository;
         }
 
+        // Get Account Role
+
+        public async Task<string> GetAcountRole(string userID)
+        {
+            string role = "no role found";
+            try
+            {
+                ApplicationUser user = await GetUserAccount(userID);
+                IList<string> roles = await userManager.GetRolesAsync((ApplicationUserDbo)user).ConfigureAwait(false);
+                if (roles.Count > 0) 
+                {
+                    role = roles[0];
+                }
+            }
+            catch (Exception e)
+            {
+                throw new RepositoryException("Unable to retrive user role", e);
+            }
+
+            return role;
+        }
+
         //Get Account Details
 
         public async Task<ApplicationUser> GetUserAccount(string userId)
