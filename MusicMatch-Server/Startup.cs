@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Abstraction.Repositories;
+using Abstraction.Services;
+using API.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -16,6 +19,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MusicMatch_Server.FIlters;
 using MusicMatch_Server.Responses;
+using MusicMatch_Server.Services;
 using Newtonsoft.Json;
 using SQLServer;
 using SQLServer.Exceptions;
@@ -38,13 +42,26 @@ namespace MusicMatch_Server
         {
             services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DBConnection")));
 
-            services.AddScoped<TestRepository>();
-            services.AddScoped<UserRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ISignInRepository, SignInRepository>();
+            services.AddScoped<IGenreRepository, GenreRepository>();
+            services.AddScoped<IVenueRepository, VenueRepository>();
+            services.AddScoped<ISuggestionsRepository, SuggestionsRepository>();
+            services.AddScoped<ISessionService, SessionService>();
+
+            services.AddSingleton<HttpContextAccessor, HttpContextAccessor>();
 
             services.AddIdentity<ApplicationUserDbo, IdentityRole>(options =>
             {
                 options.Password.RequiredLength = 8;
             }).AddEntityFrameworkStores<AppDbContext>();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.HttpOnly = true;
+                options.SlidingExpiration = true;
+            });
 
             services.AddControllers(options =>
             {
@@ -52,7 +69,7 @@ namespace MusicMatch_Server
             })
             .ConfigureApiBehaviorOptions(options =>
             {
-                options.SuppressModelStateInvalidFilter = true;
+               options.SuppressModelStateInvalidFilter = true;
             });
         }
 
@@ -65,11 +82,13 @@ namespace MusicMatch_Server
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHsts();
-
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
+
             app.UseRouting();
+
+            app.UseOptions();
 
             app.UseAuthorization();
 

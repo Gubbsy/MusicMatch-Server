@@ -3,19 +3,21 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SQLServer;
 
 namespace SQLServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200219175149_UserRework2")]
+    partial class UserRework2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.2")
+                .HasAnnotation("ProductVersion", "3.1.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -48,17 +50,17 @@ namespace SQLServer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "352a0d74-6e35-4677-8254-2aadf63ca607",
-                            ConcurrencyStamp = "7300fb90-b638-437d-8a18-153186bfa587",
+                            Id = "077eae59-37e0-4b63-99ea-f176babd86aa",
+                            ConcurrencyStamp = "1b8d4580-62ab-4e9d-ba8a-08e1dc5b5510",
                             Name = "artist",
                             NormalizedName = "ARTIST"
                         },
                         new
                         {
-                            Id = "9092e051-8648-44e0-a2e7-27987010d6c3",
-                            ConcurrencyStamp = "e0969ec3-d0c8-4323-8397-dd55c1cc56da",
-                            Name = "events manager",
-                            NormalizedName = "EVENTS MANAGER"
+                            Id = "f61c6910-02c1-4a10-a787-2ec4d5a1a774",
+                            ConcurrencyStamp = "33d8b334-1bca-4fde-9d24-5dcbc34bd6ef",
+                            Name = "eventsManager",
+                            NormalizedName = "EVENTSMANAGER"
                         });
                 });
 
@@ -268,50 +270,24 @@ namespace SQLServer.Migrations
                     b.ToTable("Genres");
                 });
 
-            modelBuilder.Entity("SQLServer.Models.IntroductionsDbo", b =>
+            modelBuilder.Entity("SQLServer.Models.TestDbo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("Requested")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UId1")
+                    b.Property<string>("FavCheese")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UId2")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Introductions");
-                });
-
-            modelBuilder.Entity("SQLServer.Models.MatchesDbo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("MatchDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UId1")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UId2")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Matches");
+                    b.ToTable("Testdbos");
                 });
 
             modelBuilder.Entity("SQLServer.Models.UserGenreDbo", b =>

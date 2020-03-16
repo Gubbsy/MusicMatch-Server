@@ -27,11 +27,11 @@ namespace MusicMatch_Server.FIlters
                 }
                 else if (context.Exception != null) 
                 {
-                    var Errors = GetErrorMessagesFromException(context.Exception);
+                    var errors = GetErrorMessagesFromException(context.Exception);
                     context.Result = controller.StatusCode(400, new APIResponse<string>
                     {
                         Payload = null,
-                        Errors = GetErrorMessagesFromException(context.Exception)
+                        Errors = errors
                     });
                     context.Exception = null;
                 }

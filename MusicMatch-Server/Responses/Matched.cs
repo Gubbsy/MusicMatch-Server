@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace MusicMatch_Server.Responses
 {
-    public class Test
+    public class Matched
     {
-        public string Name { get; set; }
-        public string FavCheese { get; set; }
+        public bool DidMatch { get; set; }
     }
 }

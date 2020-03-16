@@ -10,14 +10,14 @@ using SQLServer;
 namespace SQLServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200210191616_addUsers")]
-    partial class addUsers
+    [Migration("20200310162542_Add-Introductions-Matches")]
+    partial class AddIntroductionsMatches
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.1")
+                .HasAnnotation("ProductVersion", "3.1.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -46,6 +46,22 @@ namespace SQLServer.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "352a0d74-6e35-4677-8254-2aadf63ca607",
+                            ConcurrencyStamp = "7300fb90-b638-437d-8a18-153186bfa587",
+                            Name = "artist",
+                            NormalizedName = "ARTIST"
+                        },
+                        new
+                        {
+                            Id = "9092e051-8648-44e0-a2e7-27987010d6c3",
+                            ConcurrencyStamp = "e0969ec3-d0c8-4323-8397-dd55c1cc56da",
+                            Name = "events manager",
+                            NormalizedName = "EVENTS MANAGER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -161,6 +177,7 @@ namespace SQLServer.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Bio")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -186,7 +203,15 @@ namespace SQLServer.Migrations
                     b.Property<double>("Lon")
                         .HasColumnType("float");
 
+                    b.Property<string>("LookingFor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MatchRadius")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")
@@ -229,22 +254,112 @@ namespace SQLServer.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("SQLServer.Models.TestDbo", b =>
+            modelBuilder.Entity("SQLServer.Models.GenreDbo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("FavCheese")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Testdbos");
+                    b.ToTable("Genres");
+                });
+
+            modelBuilder.Entity("SQLServer.Models.IntroductionsDbo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Requested")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UId1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UId2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Introductions");
+                });
+
+            modelBuilder.Entity("SQLServer.Models.MatchesDbo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("MatchDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UId1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UId2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Matches");
+                });
+
+            modelBuilder.Entity("SQLServer.Models.UserGenreDbo", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("GenreId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "GenreId");
+
+                    b.HasIndex("GenreId");
+
+                    b.ToTable("UserGenre");
+                });
+
+            modelBuilder.Entity("SQLServer.Models.UserVenueDbo", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("VenueId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "VenueId");
+
+                    b.HasIndex("VenueId");
+
+                    b.ToTable("UserVenue");
+                });
+
+            modelBuilder.Entity("SQLServer.Models.VenueDbo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Venues");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -294,6 +409,36 @@ namespace SQLServer.Migrations
                     b.HasOne("SQLServer.Models.ApplicationUserDbo", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SQLServer.Models.UserGenreDbo", b =>
+                {
+                    b.HasOne("SQLServer.Models.GenreDbo", "Genre")
+                        .WithMany("AssociatedUsers")
+                        .HasForeignKey("GenreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SQLServer.Models.ApplicationUserDbo", "AssociatedUser")
+                        .WithMany("Genres")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SQLServer.Models.UserVenueDbo", b =>
+                {
+                    b.HasOne("SQLServer.Models.ApplicationUserDbo", "AssociatedUser")
+                        .WithMany("Venues")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SQLServer.Models.VenueDbo", "Venue")
+                        .WithMany("AssociatedUsers")
+                        .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
