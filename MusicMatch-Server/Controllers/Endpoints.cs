@@ -24,5 +24,9 @@ namespace MusicMatch_Server.Controllers
         // Suggestions
 
         public const string Suggestions = Base + "suggestions/";
+
+        //Matches
+
+        public const string Matches = Base + "matches/";
     }
 }

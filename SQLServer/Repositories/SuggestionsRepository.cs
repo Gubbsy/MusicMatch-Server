@@ -40,7 +40,7 @@ namespace SQLServer.Repositories
             }
         }
 
-        public async Task<bool> AddIntroduction(string uId1, string uId2, bool requested) {
+        public async Task<bool> AddIntroduction(string sender, string recipient, bool requested) {
 
             bool matched = false;
 
@@ -52,18 +52,18 @@ namespace SQLServer.Repositories
                     IntroductionsDbo intro = new IntroductionsDbo()
                     {
                         Requested = requested,
-                        UId1 = uId1,
-                        UId2 = uId2
+                        UId1 = sender,
+                        UId2 = recipient
                     };
 
                     appDbContext.Introductions.Add(intro);
                     await appDbContext.SaveChangesAsync().ConfigureAwait(false);
 
-                    Introductions introduction = await appDbContext.Introductions.FirstOrDefaultAsync(i => i.UId1 == uId2 && i.UId2 == uId1);
+                    Introductions introduction = await appDbContext.Introductions.FirstOrDefaultAsync(i => i.UId1 == recipient && i.UId2 == sender);
 
                     if (requested == true && introduction != null && introduction.Requested == true)
                     {
-                        await AddMatch(uId1, uId2);
+                        await AddMatch(sender, recipient);
                         matched = true;
                     }
 
@@ -79,18 +79,26 @@ namespace SQLServer.Repositories
             return matched;
         }
         
-        public async Task AddMatch(string uId1, string uId2) 
+        public async Task AddMatch(string user, string matchie) 
         {
             try
             {
-                MatchesDbo match = new MatchesDbo()
+                MatchesDbo userMatch = new MatchesDbo()
                 {
-                    UId1 = uId1,
-                    UId2 = uId2,
+                    User = user,
+                    Matchie = matchie,
                     MatchDate = DateTime.Now
                 };
 
-                appDbContext.Matches.Add(match);
+                MatchesDbo matchieMatch = new MatchesDbo()
+                {
+                    User = matchie,
+                    Matchie = user,
+                    MatchDate = DateTime.Now
+                };
+
+                appDbContext.Matches.Add(userMatch);
+                appDbContext.Matches.Add(matchieMatch);
                 await appDbContext.SaveChangesAsync().ConfigureAwait(false);
             }
             catch (Exception e)
