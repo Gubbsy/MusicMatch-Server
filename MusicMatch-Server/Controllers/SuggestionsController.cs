@@ -38,7 +38,7 @@ namespace MusicMatch_Server.Controllers
 
             IEnumerable<string> previouslyRespondedSuggestionsIds = suggestionsRepository.GetPreviousSuggestions(userId);
 
-            IEnumerable<SuggestedUser> suggestedUsers = matchesInRadius.Select(x => new SuggestedUser
+            IEnumerable<ReturnedUser> suggestedUsers = matchesInRadius.Select(x => new ReturnedUser
             {
                 Id = x.Id,
                 Name = x.Name,
@@ -53,7 +53,7 @@ namespace MusicMatch_Server.Controllers
                 .Where(x => x.Distance <= user.MatchRadius)
                 .OrderBy(x => x.Distance);
 
-            foreach (SuggestedUser u in suggestedUsers)
+            foreach (ReturnedUser u in suggestedUsers)
             {
                 u.Role = await userRepository.GetAcountRole(u.Id);
             }

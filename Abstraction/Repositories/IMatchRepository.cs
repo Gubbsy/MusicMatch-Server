@@ -8,6 +8,6 @@ namespace Abstraction.Repositories
 {
     public interface IMatchRepository
     {
-        public Task<IEnumerable<ApplicationUser>> GetMatches(string userID);
+        public IEnumerable<string> GetMatches(string userID);
     }
 }

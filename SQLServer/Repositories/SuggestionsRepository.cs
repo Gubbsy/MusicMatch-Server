@@ -14,12 +14,10 @@ namespace SQLServer.Repositories
     public class SuggestionsRepository : ISuggestionsRepository
     {
         private readonly AppDbContext appDbContext;
-        private readonly IUserRepository userRepository;
 
-        public SuggestionsRepository(AppDbContext appDbContext, IUserRepository userRepository)
+        public SuggestionsRepository(AppDbContext appDbContext)
         {
             this.appDbContext = appDbContext;
-            this.userRepository = userRepository;
         }
 
         public async Task<IEnumerable<ApplicationUser>> GetUsersInMatchRadius(double minLat, double maxLat, double minLon, double maxLon)
@@ -52,14 +50,14 @@ namespace SQLServer.Repositories
                     IntroductionsDbo intro = new IntroductionsDbo()
                     {
                         Requested = requested,
-                        UId1 = sender,
-                        UId2 = recipient
+                        Sender = sender,
+                        Recipient = recipient
                     };
 
                     appDbContext.Introductions.Add(intro);
                     await appDbContext.SaveChangesAsync().ConfigureAwait(false);
 
-                    Introductions introduction = await appDbContext.Introductions.FirstOrDefaultAsync(i => i.UId1 == recipient && i.UId2 == sender);
+                    Introductions introduction = await appDbContext.Introductions.FirstOrDefaultAsync(i => i.Sender == recipient && i.Recipient == sender);
 
                     if (requested == true && introduction != null && introduction.Requested == true)
                     {
@@ -113,12 +111,12 @@ namespace SQLServer.Repositories
 
             try
             {
-                IEnumerable<Introductions> previouseIntroductions = appDbContext.Introductions.Where(i => i.UId1 == userId);
-                previouseSuggestionIds =  previouseIntroductions.Select(x => x.UId2).ToList();
+                IEnumerable<Introductions> previouseIntroductions = appDbContext.Introductions.Where(i => i.Sender == userId);
+                previouseSuggestionIds =  previouseIntroductions.Select(x => x.Recipient).ToList();
             }
             catch (Exception e)
             {
-                throw new RepositoryException("Unabl to retieve previouse matches", e);
+                throw new RepositoryException("Unable to retieve previouse introductions", e);
             }
 
             return previouseSuggestionIds;

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Abstraction.Models
 {
-    public class SuggestedUser
+    public class ReturnedUser
     {
         public string Id { get; set; }
         public string Name { get; set; }

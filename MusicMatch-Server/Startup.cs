@@ -47,6 +47,7 @@ namespace MusicMatch_Server
             services.AddScoped<IGenreRepository, GenreRepository>();
             services.AddScoped<IVenueRepository, VenueRepository>();
             services.AddScoped<ISuggestionsRepository, SuggestionsRepository>();
+            services.AddScoped<IMatchRepository, MatchRepository>();
             services.AddScoped<ISessionService, SessionService>();
 
             services.AddSingleton<HttpContextAccessor, HttpContextAccessor>();
