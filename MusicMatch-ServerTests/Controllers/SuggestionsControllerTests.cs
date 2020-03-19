@@ -51,7 +51,9 @@ namespace MusicMatch_Server.Controllers.Tests
                 Venues = venues,
             };
 
-            List<ApplicationUser> matchesInRadius = new List<ApplicationUser>() { new ApplicationUser()
+            List<ApplicationUser> matchesInRadius = new List<ApplicationUser>() 
+            { 
+                new ApplicationUser()
                 {
                     Id = "Returned-ID",
                     Email = "Returned@email.com",
@@ -113,7 +115,9 @@ namespace MusicMatch_Server.Controllers.Tests
                 Venues = venues,
             };
 
-            List<ApplicationUser> matchesInRadius = new List<ApplicationUser>() { new ApplicationUser()
+            List<ApplicationUser> matchesInRadius = new List<ApplicationUser>() 
+            { 
+                new ApplicationUser()
                 {
                     Id = "Returned-ID",
                     Email = "Returned@email.com",
@@ -175,7 +179,9 @@ namespace MusicMatch_Server.Controllers.Tests
                 Venues = venues,
             };
 
-            List<ApplicationUser> matchesInRadius = new List<ApplicationUser>() { new ApplicationUser()
+            List<ApplicationUser> matchesInRadius = new List<ApplicationUser>() 
+            { 
+                new ApplicationUser()
                 {
                     Id = "Returned-ID",
                     Email = "Returned@email.com",
@@ -238,7 +244,9 @@ namespace MusicMatch_Server.Controllers.Tests
                 Venues = venues,
             };
 
-            List<ApplicationUser> matchesInRadius = new List<ApplicationUser>() { new ApplicationUser()
+            List<ApplicationUser> matchesInRadius = new List<ApplicationUser>() 
+            { 
+                new ApplicationUser()
                 {
                     Id = "Returned-ID",
                     Email = "Returned@email.com",
