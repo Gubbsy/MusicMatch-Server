@@ -16,6 +16,7 @@ namespace API.Middlewares
 
         public Task Invoke(HttpContext context)
         {
+
             if (context.Request.Headers.ContainsKey("origin"))
             {
                 context.Response.Headers.Add("Access-Control-Allow-Origin", context.Request.Headers["origin"]);

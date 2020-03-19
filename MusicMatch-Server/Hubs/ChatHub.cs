@@ -11,7 +11,7 @@ namespace MusicMatch_Server.Hubs
     {
         async Task SendMessge(Message message) 
         {
-            await Clients.All.SendAsync("Recieved Message", message);
+            await Clients.All.SendAsync("RecievedMessage", message);
         }   
     }
 }

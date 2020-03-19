@@ -41,6 +41,8 @@ namespace MusicMatch_Server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSignalR();
+
             services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DBConnection")));
 
             services.AddScoped<IUserRepository, UserRepository>();
@@ -74,7 +76,6 @@ namespace MusicMatch_Server
                options.SuppressModelStateInvalidFilter = true;
             });
 
-            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -85,6 +86,9 @@ namespace MusicMatch_Server
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
             app.UseHttpsRedirection();
 
