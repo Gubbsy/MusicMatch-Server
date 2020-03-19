@@ -25,6 +25,7 @@ using SQLServer;
 using SQLServer.Exceptions;
 using SQLServer.Models;
 using SQLServer.Repositories;
+using MusicMatch_Server.Hubs;
 
 namespace MusicMatch_Server
 {
@@ -72,6 +73,8 @@ namespace MusicMatch_Server
             {
                options.SuppressModelStateInvalidFilter = true;
             });
+
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -95,7 +98,8 @@ namespace MusicMatch_Server
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+            endpoints.MapControllers();
+            endpoints.MapHub<ChatHub>("/chatHub");
             });
         }
     }
