@@ -49,14 +49,19 @@ namespace MusicMatch_Server.Controllers
                 return NoRequest();
             }
 
-            IEnumerable<string>? role = await signInRepository.SignIn(request.Credential, request.Password).ConfigureAwait(false);
+            ApplicationUser? user = await signInRepository.SignIn(request.Credential, request.Password).ConfigureAwait(false);
 
-            if (role == null)
+            if (user == null)
             {
                 return Unauthorized("Incorrect Username or Password");
             }
 
-            return NoContent();
+            return Ok(new Responses.UserLoggedIn 
+            { 
+                UserId = user.Id,
+                UserName = user.UserName,
+                Name = user.Name
+            });
         }
 
         [HttpPost(Endpoints.Account + "signout")]
