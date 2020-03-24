@@ -41,6 +41,7 @@ namespace MusicMatch_Server.Controllers
             IEnumerable<ReturnedUser> suggestedUsers = matchesInRadius.Select(x => new ReturnedUser
             {
                 Id = x.Id,
+                Username = x.UserName,
                 Name = x.Name,
                 Bio = x.Bio,
                 LookingFor = x.LookingFor,

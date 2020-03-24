@@ -42,6 +42,7 @@ namespace MusicMatch_Server.Controllers
                 ReturnedUser matchResponse = new ReturnedUser
                 {
                     Id = match.Id,
+                    Username = match.UserName,
                     Name = match.Name,
                     Bio = match.Bio,
                     LookingFor = match.LookingFor,

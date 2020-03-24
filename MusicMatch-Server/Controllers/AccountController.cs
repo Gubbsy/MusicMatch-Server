@@ -1,16 +1,8 @@
 using Abstraction.Models;
 using Abstraction.Repositories;
 using Abstraction.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MusicMatch_Server.Services;
-using SQLServer.Exceptions;
-using SQLServer.Models;
-using SQLServer.Repositories;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace MusicMatch_Server.Controllers
@@ -59,7 +51,7 @@ namespace MusicMatch_Server.Controllers
             return Ok(new Responses.UserLoggedIn 
             { 
                 UserId = user.Id,
-                UserName = user.UserName,
+                Username = user.UserName,
                 Name = user.Name
             });
         }
