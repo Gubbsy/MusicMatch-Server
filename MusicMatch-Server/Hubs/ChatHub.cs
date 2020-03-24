@@ -9,7 +9,7 @@ namespace MusicMatch_Server.Hubs
     {
         public async Task SendMessage(Message message)
         {
-            await Clients.User(message.UserId).SendAsync("ReceiveMessage", message);
+            await Clients.User(message.Recipient).SendAsync("ReceiveMessage", message);
         }
     }
 }

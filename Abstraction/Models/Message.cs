@@ -6,8 +6,8 @@ namespace Abstraction.Models
 {
     public class Message
     {
-        public string UserId { get; set; }
-        public string Type { get; set; }
+        public string Sender { get; set; }
+        public string Recipient { get; set; }
         public string Msg { get; set; }
         public float Date { get; set; }
     }
