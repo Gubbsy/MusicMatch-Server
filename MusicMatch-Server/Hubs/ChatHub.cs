@@ -7,9 +7,9 @@ namespace MusicMatch_Server.Hubs
 {
     public class ChatHub : Hub
     {
-        public async Task SendMessage(string user, string message)
+        public async Task SendMessage(Message message)
         {
-            await Clients.All.SendAsync("ReceiveMessage", user, message);
+            await Clients.User(message.UserId).SendAsync("ReceiveMessage", message);
         }
     }
 }
