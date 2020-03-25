@@ -24,7 +24,6 @@ namespace MusicMatch_Server.Controllers
             this.userRepository = userRepository;
         }
 
-        public SessionService SessionService { get; }
 
         [HttpPost(Endpoints.Matches + "getmatches")]
         public async Task<ObjectResult> GetMatches() 

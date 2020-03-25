@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MusicMatch_Server.Requests
 {
-    public class ResponseToSuggestion
+    public class GetPreviouseMessages
     {
-        public string SuggestedUserId { get; set; }
-        public bool RequestMatch { get; set; }
+        public string RecipientId { get; set; }
     }
 }

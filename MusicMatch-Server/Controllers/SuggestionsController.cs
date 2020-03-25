@@ -65,9 +65,14 @@ namespace MusicMatch_Server.Controllers
         [HttpPost(Endpoints.Suggestions + "respondtosuggestion")]
         public async Task<ObjectResult> RespondToSuggestion(Requests.ResponseToSuggestion request)
         {
+            if (request == null)
+            {
+                return NoRequest();
+            }
+
             string userId = sessionService.GetCurrentUserId();
 
-            bool didMatch = await this.suggestionsRepository.AddIntroduction(userId, request.SuggestedUserId, request.requestMatch);
+            bool didMatch = await this.suggestionsRepository.AddIntroduction(userId, request.SuggestedUserId, request.RequestMatch);
 
             return Ok(new Matched()
             {

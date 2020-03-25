@@ -9,6 +9,6 @@ namespace Abstraction.Repositories
     public interface IMessageRepository
     {
         public Task SaveMessage(Message message);
-        public Task<IEnumerable<Message>> RetrieveMessage(string userId);
+        public Task<IEnumerable<Message>> RetrieveMessage(string userId, string recipientId);
     }
 }

@@ -61,6 +61,9 @@ namespace SQLServer
 
             modelBuilder.Entity<MatchesDbo>()
                .HasKey(m => m.Id);
+
+            modelBuilder.Entity<MessageDbo>()
+                .HasKey(mes => mes.Id);
         }
 
         private void SetUpManyToManyRelationships(ModelBuilder modelBuilder)

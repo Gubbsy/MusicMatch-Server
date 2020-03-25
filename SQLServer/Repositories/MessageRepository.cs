@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SQLServer.Repositories
 {
-    class MessageRepository : IMessageRepository
+    public class MessageRepository : IMessageRepository
     {
         private readonly AppDbContext appDbContext;
 
@@ -20,11 +20,14 @@ namespace SQLServer.Repositories
             this.appDbContext = appDbContext;
         }
 
-        public async Task<IEnumerable<Message>> RetrieveMessage(string userId)
+        public async Task<IEnumerable<Message>> RetrieveMessage(string userId, string recipientId)
         {
             try
             {
-                return await appDbContext.Messages.Where(m => m.Sender == userId || m.Recipient == userId).ToListAsync(); 
+                return await appDbContext.Messages
+                    .Where(m => (m.Sender == userId && m.Recipient == recipientId) || (m.Recipient == userId && m.Sender == recipientId))
+                    .OrderBy(m => m.Date)
+                    .ToListAsync(); 
             }
             catch (Exception e)
             {
@@ -36,7 +39,13 @@ namespace SQLServer.Repositories
         {
             try
             {
-                appDbContext.Messages.Add((MessageDbo)message);
+                MessageDbo newMessage = new MessageDbo { 
+                    Sender = message.Sender,
+                    Recipient = message.Recipient,
+                    Msg = message.Msg,
+                    Date = message.Date
+                };
+                appDbContext.Messages.Add(newMessage);
                 await appDbContext.SaveChangesAsync().ConfigureAwait(false);
             }
             catch (Exception e)
