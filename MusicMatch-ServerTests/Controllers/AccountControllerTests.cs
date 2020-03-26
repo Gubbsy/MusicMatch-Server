@@ -37,7 +37,6 @@ namespace MusicMatch_Server.Controllers.Tests
         [Fact()]
         public async Task CreateAccount_AlwaysReturnsA_400ONullRequest()
         {
-            //  Mock<AppDbContext>
             Requests.CreateAccount request = null;
 
             ObjectResult result = await subject.CreateAccount(request);
@@ -92,7 +91,7 @@ namespace MusicMatch_Server.Controllers.Tests
         }
 
         [Fact()]
-        public async void SignInTest_AlwaysReturnsA204()
+        public async void SignInTest_AlwaysReturnsA200()
         {
             Requests.SignIn request = new Requests.SignIn
             {
@@ -100,9 +99,26 @@ namespace MusicMatch_Server.Controllers.Tests
                 Password = "abcABC123;",
             };
 
+            List<UserGenre> genres = new List<UserGenre>() { };
+            List<UserVenue> venues = new List<UserVenue>() { };
+
+            ApplicationUser returnedUser = new ApplicationUser
+            {
+                Genres = genres,
+                Venues = venues,
+                Name = "Test Name",
+                Bio = "Test Bio",
+                LookingFor = "Test Looking For",
+                Lat = 50,
+                Lon = 23,
+                MatchRadius = 40,
+            };
+
+            signInRepository.Setup(x => x.SignIn(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(returnedUser);
+            
             ObjectResult result = await subject.SignIn(request);
 
-            Assert.Equal(204, result.StatusCode);
+            Assert.Equal(200, result.StatusCode);
         }
 
         [Fact()]
