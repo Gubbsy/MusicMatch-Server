@@ -10,7 +10,7 @@ namespace SQLServer
     {
         //  Properties
         //  ==========
-       
+
         public DbSet<GenreDbo> Genres { get; set; }
         public DbSet<VenueDbo> Venues { get; set; }
         public DbSet<UserGenreDbo> UserGenre { get; set; }

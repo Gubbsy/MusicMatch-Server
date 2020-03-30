@@ -3,8 +3,6 @@ using Abstraction.Repositories;
 using Abstraction.Services;
 using Geolocation;
 using Microsoft.AspNetCore.Mvc;
-using MusicMatch_Server.Services;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,7 +24,7 @@ namespace MusicMatch_Server.Controllers
 
 
         [HttpPost(Endpoints.Matches + "getmatches")]
-        public async Task<ObjectResult> GetMatches() 
+        public async Task<ObjectResult> GetMatches()
         {
             string userId = sessionService.GetCurrentUserId();
             ApplicationUser currentUser = await userRepository.GetUserAccount(userId);

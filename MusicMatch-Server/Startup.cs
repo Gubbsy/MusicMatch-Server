@@ -10,11 +10,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MusicMatch_Server.FIlters;
+using MusicMatch_Server.Hubs;
 using MusicMatch_Server.Services;
 using SQLServer;
 using SQLServer.Models;
 using SQLServer.Repositories;
-using MusicMatch_Server.Hubs;
 
 namespace MusicMatch_Server
 {
@@ -63,7 +63,7 @@ namespace MusicMatch_Server
             })
             .ConfigureApiBehaviorOptions(options =>
             {
-               options.SuppressModelStateInvalidFilter = true;
+                options.SuppressModelStateInvalidFilter = true;
             });
 
         }

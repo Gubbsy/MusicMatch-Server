@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using System;
-using System.Threading.Tasks;
-using Abstraction.Models;
+﻿using Abstraction.Models;
 using Abstraction.Repositories;
+using Microsoft.AspNetCore.SignalR;
+using System.Threading.Tasks;
 
 namespace MusicMatch_Server.Hubs
 {

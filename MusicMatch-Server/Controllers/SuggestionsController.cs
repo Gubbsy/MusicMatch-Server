@@ -1,14 +1,14 @@
 ﻿using Abstraction.Models;
 using Abstraction.Repositories;
 using Abstraction.Services;
+using Geolocation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using MusicMatch_Server.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Geolocation;
-using MusicMatch_Server.Responses;
-using Microsoft.EntityFrameworkCore;
 
 namespace MusicMatch_Server.Controllers
 {
@@ -50,7 +50,7 @@ namespace MusicMatch_Server.Controllers
                 Distance = GeoCalculator.GetDistance(user.Lat, user.Lon, x.Lat, x.Lon)
             }).ToList()
                 .Where(x => x.Id != user.Id)
-                .Where(x =>!previouslyRespondedSuggestionsIds.Contains(x.Id))
+                .Where(x => !previouslyRespondedSuggestionsIds.Contains(x.Id))
                 .Where(x => x.Distance <= user.MatchRadius)
                 .OrderBy(x => x.Distance);
 
@@ -77,7 +77,7 @@ namespace MusicMatch_Server.Controllers
             return Ok(new Matched()
             {
                 DidMatch = didMatch
-            }) ;
+            });
         }
     }
 }

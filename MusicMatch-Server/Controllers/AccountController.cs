@@ -48,8 +48,8 @@ namespace MusicMatch_Server.Controllers
                 return Unauthorized("Incorrect Username or Password");
             }
 
-            return Ok(new Responses.UserLoggedIn 
-            { 
+            return Ok(new Responses.UserLoggedIn
+            {
                 UserId = user.Id,
                 Username = user.UserName,
                 Name = user.Name
@@ -64,7 +64,7 @@ namespace MusicMatch_Server.Controllers
         }
 
         [HttpPost(Endpoints.Account + "updateaccountdetails")]
-        public async Task<ObjectResult> UpdateAccountDetails(Requests.UpdateAccountDetails request) 
+        public async Task<ObjectResult> UpdateAccountDetails(Requests.UpdateAccountDetails request)
         {
             if (request == null)
             {
@@ -79,7 +79,7 @@ namespace MusicMatch_Server.Controllers
         }
 
         [HttpPost(Endpoints.Account + "getaccountdetails")]
-        public async Task<ObjectResult> GetAccountDetails() 
+        public async Task<ObjectResult> GetAccountDetails()
         {
             string userId = sesionService.GetCurrentUserId();
             ApplicationUser user = await userRepository.GetUserAccount(userId);
@@ -94,7 +94,7 @@ namespace MusicMatch_Server.Controllers
                 MatchRadius = user.MatchRadius,
                 Genres = user.Genres.Select(ug => ug.Genre.Name).ToArray(),
                 Venues = user.Venues.Select(uv => uv.Venue.Name).ToArray()
-            }) ;
+            });
         }
     }
 }

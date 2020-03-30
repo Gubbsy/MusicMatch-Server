@@ -1,13 +1,12 @@
 ﻿using Abstraction.Models;
 using Abstraction.Repositories;
+using Microsoft.EntityFrameworkCore;
 using SQLServer.Exceptions;
 using SQLServer.Models;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace SQLServer.Repositories
 {
@@ -27,7 +26,7 @@ namespace SQLServer.Repositories
                 return await appDbContext.Messages
                     .Where(m => (m.Sender == userId && m.Recipient == recipientId) || (m.Recipient == userId && m.Sender == recipientId))
                     .OrderBy(m => m.Date)
-                    .ToListAsync(); 
+                    .ToListAsync();
             }
             catch (Exception e)
             {
@@ -39,7 +38,8 @@ namespace SQLServer.Repositories
         {
             try
             {
-                MessageDbo newMessage = new MessageDbo { 
+                MessageDbo newMessage = new MessageDbo
+                {
                     Sender = message.Sender,
                     Recipient = message.Recipient,
                     Msg = message.Msg,

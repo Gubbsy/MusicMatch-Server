@@ -1,13 +1,12 @@
 ﻿using Abstraction.Models;
 using Abstraction.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using SQLServer.Exceptions;
 using SQLServer.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SQLServer.Repositories
 {
@@ -38,7 +37,8 @@ namespace SQLServer.Repositories
             }
         }
 
-        public async Task<bool> AddIntroduction(string sender, string recipient, bool requested) {
+        public async Task<bool> AddIntroduction(string sender, string recipient, bool requested)
+        {
 
             bool matched = false;
 
@@ -76,8 +76,8 @@ namespace SQLServer.Repositories
 
             return matched;
         }
-        
-        public async Task AddMatch(string user, string matchie) 
+
+        public async Task AddMatch(string user, string matchie)
         {
             try
             {
@@ -112,7 +112,7 @@ namespace SQLServer.Repositories
             try
             {
                 IEnumerable<Introductions> previouseIntroductions = appDbContext.Introductions.Where(i => i.Sender == userId);
-                previouseSuggestionIds =  previouseIntroductions.Select(x => x.Recipient).ToList();
+                previouseSuggestionIds = previouseIntroductions.Select(x => x.Recipient).ToList();
             }
             catch (Exception e)
             {

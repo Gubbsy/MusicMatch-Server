@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
-using SQLServer.Models;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Abstraction.Models;
+using Abstraction.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SQLServer.Exceptions;
+using SQLServer.Models;
+using System;
 using System.Collections.Generic;
-using Abstraction.Repositories;
-using Abstraction.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SQLServer.Repositories
 {
@@ -35,7 +35,7 @@ namespace SQLServer.Repositories
             {
                 ApplicationUser user = await GetUserAccount(userID);
                 IList<string> roles = await userManager.GetRolesAsync((ApplicationUserDbo)user).ConfigureAwait(false);
-                if (roles.Count > 0) 
+                if (roles.Count > 0)
                 {
                     role = roles[0];
                 }
@@ -54,12 +54,12 @@ namespace SQLServer.Repositories
         {
             try
             {
-              return await appDbContext.Users
-                    .Include(u => u.Genres)
-                        .ThenInclude(g => g.Genre)
-                    .Include(u => u.Venues)
-                        .ThenInclude(v => v.Venue)
-                    .FirstOrDefaultAsync(u => u.Id == userId).ConfigureAwait(false);
+                return await appDbContext.Users
+                      .Include(u => u.Genres)
+                          .ThenInclude(g => g.Genre)
+                      .Include(u => u.Venues)
+                          .ThenInclude(v => v.Venue)
+                      .FirstOrDefaultAsync(u => u.Id == userId).ConfigureAwait(false);
 
             }
             catch (Exception e)

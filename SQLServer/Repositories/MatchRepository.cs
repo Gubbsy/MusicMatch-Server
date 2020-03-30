@@ -1,11 +1,9 @@
 ﻿using Abstraction.Models;
 using Abstraction.Repositories;
+using SQLServer.Exceptions;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using System.Linq;
-using SQLServer.Exceptions;
 
 namespace SQLServer.Repositories
 {
@@ -27,7 +25,7 @@ namespace SQLServer.Repositories
                 IEnumerable<Matches> matches = appDbContext.Matches.Where(m => m.User == userId).ToList();
                 matchIds = matches.Select(x => x.Matchie).ToList();
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                 throw new RepositoryException("Unable to retieve matches", e);
             }

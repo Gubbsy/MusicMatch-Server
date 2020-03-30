@@ -1,15 +1,12 @@
 ﻿using Abstraction.Models;
-using Microsoft.AspNetCore.Identity;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace SQLServer.Models
 {
     public class ApplicationUserDbo : ApplicationUser
     {
-        public new string Name { get => base.Name; set => base.Name = value ; }
+        public new string Name { get => base.Name; set => base.Name = value; }
         public new double Lat { get => base.Lat; set => base.Lat = value; }
         public new double Lon { get => base.Lon; set => base.Lon = value; }
         public new string Bio { get => base.Bio; set => base.Bio = value; }

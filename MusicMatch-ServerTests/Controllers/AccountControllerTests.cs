@@ -1,19 +1,11 @@
-﻿using Xunit;
-using MusicMatch_Server.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Moq;
-using SQLServer.Repositories;
-using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Abstraction.Models;
 using Abstraction.Repositories;
-using System.Security.Claims;
-using MusicMatch_Server.Services;
 using Abstraction.Services;
-using Abstraction.Models;
-using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace MusicMatch_Server.Controllers.Tests
 {
@@ -69,7 +61,7 @@ namespace MusicMatch_Server.Controllers.Tests
                 Username = "TestyMcTest",
                 Email = "Test@Test.com",
                 Password = "abcABC123;"
-               
+
             };
 
             userRepository.Setup(x => x.Register(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
@@ -86,7 +78,7 @@ namespace MusicMatch_Server.Controllers.Tests
             Requests.SignIn request = null;
 
             ObjectResult result = await subject.SignIn(request);
-            
+
             Assert.Equal(400, result.StatusCode);
         }
 
@@ -115,7 +107,7 @@ namespace MusicMatch_Server.Controllers.Tests
             };
 
             signInRepository.Setup(x => x.SignIn(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(returnedUser);
-            
+
             ObjectResult result = await subject.SignIn(request);
 
             Assert.Equal(200, result.StatusCode);

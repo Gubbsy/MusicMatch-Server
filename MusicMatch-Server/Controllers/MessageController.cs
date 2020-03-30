@@ -2,9 +2,7 @@
 using Abstraction.Repositories;
 using Abstraction.Services;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MusicMatch_Server.Controllers
@@ -22,7 +20,7 @@ namespace MusicMatch_Server.Controllers
         }
 
         [HttpPost(Endpoints.Messages + "getpreviousmessages")]
-        public async Task<ObjectResult> GetPreviousMessages(Requests.GetPreviouseMessages request) 
+        public async Task<ObjectResult> GetPreviousMessages(Requests.GetPreviouseMessages request)
         {
             if (request == null)
             {

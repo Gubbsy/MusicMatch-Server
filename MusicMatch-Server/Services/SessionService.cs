@@ -1,10 +1,6 @@
 ﻿using Abstraction.Services;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace MusicMatch_Server.Services
 {
@@ -12,13 +8,13 @@ namespace MusicMatch_Server.Services
     {
         private readonly HttpContextAccessor httpContextAccessor;
 
-        public SessionService(HttpContextAccessor httpContextAccessor) 
+        public SessionService(HttpContextAccessor httpContextAccessor)
         {
             this.httpContextAccessor = httpContextAccessor;
         }
 
-        public string GetCurrentUserId() 
-        { 
+        public string GetCurrentUserId()
+        {
             return httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
         }
     }

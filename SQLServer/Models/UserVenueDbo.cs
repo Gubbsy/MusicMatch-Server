@@ -1,8 +1,4 @@
 ﻿using Abstraction.Models;
-using System.Linq;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SQLServer.Models
 {

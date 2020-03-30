@@ -1,14 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
-using SQLServer.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
+﻿using Abstraction.Models;
+using Abstraction.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SQLServer.Models;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Abstraction.Repositories;
-using Abstraction.Models;
 
 namespace SQLServer.Repositories
 {
@@ -35,7 +31,7 @@ namespace SQLServer.Repositories
             {
                 username = (await appDbContext.Users.FirstOrDefaultAsync(u => u.Email == credential.ToLower()).ConfigureAwait(false))?.UserName;
             }
-            else 
+            else
             {
                 username = credential;
             }
