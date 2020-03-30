@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Abstraction.Models
+﻿namespace Abstraction.Models
 {
     public class ReturnedUser
     {
         public string Id { get; set; }
+        public string Username { get; set; }
         public string Name { get; set; }
         public double Distance { get; set; }
         public string Bio { get; set; }

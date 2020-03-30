@@ -1,7 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Identity;
-using System.Text;
 
 namespace Abstraction.Models
 {

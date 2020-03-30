@@ -1,10 +1,11 @@
 ﻿namespace Abstraction.Models
 {
-    public class Introductions
+    public class Message
     {
         public int Id { get; set; }
         public string Sender { get; set; }
         public string Recipient { get; set; }
-        public bool Requested { get; set; }
+        public string Msg { get; set; }
+        public float Date { get; set; }
     }
 }

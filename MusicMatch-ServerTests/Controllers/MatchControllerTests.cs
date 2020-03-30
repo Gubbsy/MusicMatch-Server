@@ -1,13 +1,10 @@
-﻿using Xunit;
-using MusicMatch_Server.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Moq;
-using Abstraction.Services;
+﻿using Abstraction.Models;
 using Abstraction.Repositories;
-using Abstraction.Models;
+using Abstraction.Services;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
+using System.Collections.Generic;
+using Xunit;
 
 namespace MusicMatch_Server.Controllers.Tests
 {
@@ -51,11 +48,11 @@ namespace MusicMatch_Server.Controllers.Tests
                 Venues = venues,
             };
 
-            List<string> matchIds = new List<string> 
-            { "Test-Match-Id-1", 
+            List<string> matchIds = new List<string>
+            { "Test-Match-Id-1",
               "Test-Match-Id-2",
-              "Test-Match-Id-3", 
-              "Test-Match-Id-4" 
+              "Test-Match-Id-3",
+              "Test-Match-Id-4"
             };
 
             string role = "artist";

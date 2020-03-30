@@ -1,16 +1,8 @@
 using Abstraction.Models;
 using Abstraction.Repositories;
 using Abstraction.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MusicMatch_Server.Services;
-using SQLServer.Exceptions;
-using SQLServer.Models;
-using SQLServer.Repositories;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace MusicMatch_Server.Controllers
@@ -49,14 +41,19 @@ namespace MusicMatch_Server.Controllers
                 return NoRequest();
             }
 
-            IEnumerable<string>? role = await signInRepository.SignIn(request.Credential, request.Password).ConfigureAwait(false);
+            ApplicationUser? user = await signInRepository.SignIn(request.Credential, request.Password).ConfigureAwait(false);
 
-            if (role == null)
+            if (user == null)
             {
                 return Unauthorized("Incorrect Username or Password");
             }
 
-            return NoContent();
+            return Ok(new Responses.UserLoggedIn
+            {
+                UserId = user.Id,
+                Username = user.UserName,
+                Name = user.Name
+            });
         }
 
         [HttpPost(Endpoints.Account + "signout")]
@@ -67,7 +64,7 @@ namespace MusicMatch_Server.Controllers
         }
 
         [HttpPost(Endpoints.Account + "updateaccountdetails")]
-        public async Task<ObjectResult> UpdateAccountDetails(Requests.UpdateAccountDetails request) 
+        public async Task<ObjectResult> UpdateAccountDetails(Requests.UpdateAccountDetails request)
         {
             if (request == null)
             {
@@ -82,7 +79,7 @@ namespace MusicMatch_Server.Controllers
         }
 
         [HttpPost(Endpoints.Account + "getaccountdetails")]
-        public async Task<ObjectResult> GetAccountDetails() 
+        public async Task<ObjectResult> GetAccountDetails()
         {
             string userId = sesionService.GetCurrentUserId();
             ApplicationUser user = await userRepository.GetUserAccount(userId);
@@ -97,7 +94,7 @@ namespace MusicMatch_Server.Controllers
                 MatchRadius = user.MatchRadius,
                 Genres = user.Genres.Select(ug => ug.Genre.Name).ToArray(),
                 Venues = user.Venues.Select(uv => uv.Venue.Name).ToArray()
-            }) ;
+            });
         }
     }
 }

@@ -11,13 +11,13 @@ namespace SQLServer
         //  Properties
         //  ==========
 
-
         public DbSet<GenreDbo> Genres { get; set; }
         public DbSet<VenueDbo> Venues { get; set; }
         public DbSet<UserGenreDbo> UserGenre { get; set; }
         public DbSet<UserVenueDbo> UserVenue { get; set; }
         public DbSet<IntroductionsDbo> Introductions { get; set; }
         public DbSet<MatchesDbo> Matches { get; set; }
+        public DbSet<MessageDbo> Messages { get; set; }
 
         //  Constructors
         //  ============
@@ -61,6 +61,9 @@ namespace SQLServer
 
             modelBuilder.Entity<MatchesDbo>()
                .HasKey(m => m.Id);
+
+            modelBuilder.Entity<MessageDbo>()
+                .HasKey(mes => mes.Id);
         }
 
         private void SetUpManyToManyRelationships(ModelBuilder modelBuilder)

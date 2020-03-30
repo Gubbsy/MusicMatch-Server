@@ -1,19 +1,11 @@
-﻿using Xunit;
-using MusicMatch_Server.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Moq;
-using SQLServer.Repositories;
-using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Abstraction.Models;
 using Abstraction.Repositories;
-using System.Security.Claims;
-using MusicMatch_Server.Services;
 using Abstraction.Services;
-using Abstraction.Models;
-using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace MusicMatch_Server.Controllers.Tests
 {
@@ -37,7 +29,6 @@ namespace MusicMatch_Server.Controllers.Tests
         [Fact()]
         public async Task CreateAccount_AlwaysReturnsA_400ONullRequest()
         {
-            //  Mock<AppDbContext>
             Requests.CreateAccount request = null;
 
             ObjectResult result = await subject.CreateAccount(request);
@@ -70,7 +61,7 @@ namespace MusicMatch_Server.Controllers.Tests
                 Username = "TestyMcTest",
                 Email = "Test@Test.com",
                 Password = "abcABC123;"
-               
+
             };
 
             userRepository.Setup(x => x.Register(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
@@ -87,12 +78,12 @@ namespace MusicMatch_Server.Controllers.Tests
             Requests.SignIn request = null;
 
             ObjectResult result = await subject.SignIn(request);
-            
+
             Assert.Equal(400, result.StatusCode);
         }
 
         [Fact()]
-        public async void SignInTest_AlwaysReturnsA204()
+        public async void SignInTest_AlwaysReturnsA200()
         {
             Requests.SignIn request = new Requests.SignIn
             {
@@ -100,9 +91,26 @@ namespace MusicMatch_Server.Controllers.Tests
                 Password = "abcABC123;",
             };
 
+            List<UserGenre> genres = new List<UserGenre>() { };
+            List<UserVenue> venues = new List<UserVenue>() { };
+
+            ApplicationUser returnedUser = new ApplicationUser
+            {
+                Genres = genres,
+                Venues = venues,
+                Name = "Test Name",
+                Bio = "Test Bio",
+                LookingFor = "Test Looking For",
+                Lat = 50,
+                Lon = 23,
+                MatchRadius = 40,
+            };
+
+            signInRepository.Setup(x => x.SignIn(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(returnedUser);
+
             ObjectResult result = await subject.SignIn(request);
 
-            Assert.Equal(204, result.StatusCode);
+            Assert.Equal(200, result.StatusCode);
         }
 
         [Fact()]
