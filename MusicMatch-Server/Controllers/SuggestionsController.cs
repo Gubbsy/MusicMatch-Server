@@ -43,6 +43,7 @@ namespace MusicMatch_Server.Controllers
                 Id = x.Id,
                 Username = x.UserName,
                 Name = x.Name,
+                Picture = x.Picture,
                 Bio = x.Bio,
                 LookingFor = x.LookingFor,
                 Genres = x.Genres.Select(ug => ug.Genre.Name).ToArray(),
