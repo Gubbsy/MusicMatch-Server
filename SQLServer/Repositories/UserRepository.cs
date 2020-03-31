@@ -94,11 +94,12 @@ namespace SQLServer.Repositories
                 UserName = username,
                 Email = email,
                 Name = "",
+                Picture = "",
                 Lat = 0,
                 Lon = 0,
                 Bio = "",
                 LookingFor = "",
-                MatchRadius = 100
+                MatchRadius = 100,
             };
 
             using (var transaction = appDbContext.Database.BeginTransaction())
@@ -127,7 +128,7 @@ namespace SQLServer.Repositories
         }
 
         //Update Account Details
-        public async Task UpdateAccountDetails(string userId, string[] genres, string[] venues, string name, string bio, string lookingFor, int matchRadius, double lat, double lon)
+        public async Task UpdateAccountDetails(string userId, string[] genres, string[] venues, string name, string picture, string bio, string lookingFor, int matchRadius, double lat, double lon)
         {
             ApplicationUserDbo user = (ApplicationUserDbo)await GetUserAccount(userId);
 
@@ -137,6 +138,7 @@ namespace SQLServer.Repositories
             }
 
             user.Name = name;
+            user.Picture = picture;
             user.Bio = bio;
             user.LookingFor = lookingFor;
             user.Lat = lat;

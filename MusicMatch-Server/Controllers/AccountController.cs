@@ -73,7 +73,7 @@ namespace MusicMatch_Server.Controllers
 
             string userId = sesionService.GetCurrentUserId();
 
-            await userRepository.UpdateAccountDetails(userId, request.Genres, request.Venues, request.Name, request.Bio, request.LookingFor, request.MatchRadius, request.Lat, request.Lon).ConfigureAwait(false);
+            await userRepository.UpdateAccountDetails(userId, request.Genres, request.Venues, request.Name, request.Picture, request.Bio, request.LookingFor, request.MatchRadius, request.Lat, request.Lon).ConfigureAwait(false);
 
             return NoContent();
         }
@@ -87,6 +87,7 @@ namespace MusicMatch_Server.Controllers
             return Ok(new Responses.AccountDetails
             {
                 Name = user.Name,
+                Picture = user.Picture,
                 Bio = user.Bio,
                 LookingFor = user.LookingFor,
                 Lat = user.Lat,

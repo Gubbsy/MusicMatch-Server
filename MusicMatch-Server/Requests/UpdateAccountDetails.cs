@@ -5,6 +5,7 @@
         public string[] Genres { get; set; }
         public string[] Venues { get; set; }
         public string Name { get; set; }
+        public string Picture { get; set; }
         public string Bio { get; set; }
         public string LookingFor { get; set; }
         public int MatchRadius { get; set; }
