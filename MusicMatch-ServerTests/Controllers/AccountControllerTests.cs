@@ -99,6 +99,7 @@ namespace MusicMatch_Server.Controllers.Tests
                 Genres = genres,
                 Venues = venues,
                 Name = "Test Name",
+                Picture = "Test picture",
                 Bio = "Test Bio",
                 LookingFor = "Test Looking For",
                 Lat = 50,
@@ -166,6 +167,7 @@ namespace MusicMatch_Server.Controllers.Tests
                 Genres = new string[] { "Rock", "Roll" },
                 Venues = new string[] { "Blue Hut", "Nug" },
                 Name = "Test Name",
+                Picture = "Test Picture",
                 Bio = "Test Bio",
                 LookingFor = "Test Looking For",
                 Lat = 50,
@@ -189,6 +191,7 @@ namespace MusicMatch_Server.Controllers.Tests
                 Genres = new string[] { "Rock", "Roll" },
                 Venues = new string[] { "Blue Hut", "Nug" },
                 Name = "Test Name",
+                Picture = "Test picture",
                 Bio = "Test Bio",
                 LookingFor = "Test Looking For",
                 Lat = 50,
@@ -197,11 +200,11 @@ namespace MusicMatch_Server.Controllers.Tests
             };
 
             sessionService.Setup(x => x.GetCurrentUserId()).Returns(userId);
-            userRepository.Setup(x => x.UpdateAccountDetails(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<string[]>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<double>()));
+            userRepository.Setup(x => x.UpdateAccountDetails(It.IsAny<string>(), It.IsAny<string[]>(), It.IsAny<string[]>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<double>()));
 
             ObjectResult result = await subject.UpdateAccountDetails(request);
 
-            userRepository.Verify(x => x.UpdateAccountDetails(userId, request.Genres, request.Venues, request.Name, request.Bio, request.LookingFor, request.MatchRadius, request.Lat, request.Lon), Times.Once);
+            userRepository.Verify(x => x.UpdateAccountDetails(userId, request.Genres, request.Venues, request.Name, request.Picture, request.Bio, request.LookingFor, request.MatchRadius, request.Lat, request.Lon), Times.Once);
         }
 
         [Fact()]
@@ -217,6 +220,7 @@ namespace MusicMatch_Server.Controllers.Tests
                 Genres = genres,
                 Venues = venues,
                 Name = "Test Name",
+                Picture = "Test picture",
                 Bio = "Test Bio",
                 LookingFor = "Test Looking For",
                 Lat = 50,
@@ -245,6 +249,7 @@ namespace MusicMatch_Server.Controllers.Tests
                 Genres = genres,
                 Venues = venues,
                 Name = "Test Name",
+                Picture = "Test picture",
                 Bio = "Test Bio",
                 LookingFor = "Test Looking For",
                 Lat = 50,
@@ -273,6 +278,7 @@ namespace MusicMatch_Server.Controllers.Tests
                 Genres = genres,
                 Venues = venues,
                 Name = "Test Name",
+                Picture = "Test picture",
                 Bio = "Test Bio",
                 LookingFor = "Test Looking For",
                 Lat = 50,
