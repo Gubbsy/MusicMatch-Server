@@ -93,7 +93,7 @@ namespace SQLServer.Repositories
             {
                 UserName = username,
                 Email = email,
-                Name = "",
+                Name = username,
                 Picture = "",
                 Lat = 0,
                 Lon = 0,
