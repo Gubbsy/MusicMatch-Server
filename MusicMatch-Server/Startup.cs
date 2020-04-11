@@ -32,6 +32,7 @@ namespace MusicMatch_Server
         {
             services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DBConnection")));
 
+            services.AddScoped<ISessionService, SessionService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ISignInRepository, SignInRepository>();
             services.AddScoped<IGenreRepository, GenreRepository>();
@@ -39,7 +40,7 @@ namespace MusicMatch_Server
             services.AddScoped<ISuggestionsRepository, SuggestionsRepository>();
             services.AddScoped<IMatchRepository, MatchRepository>();
             services.AddScoped<IMessageRepository, MessageRepository>();
-            services.AddScoped<ISessionService, SessionService>();
+           
 
             services.AddSingleton<HttpContextAccessor, HttpContextAccessor>();
 
