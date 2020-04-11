@@ -40,7 +40,7 @@ namespace MusicMatch_Server.Controllers
                 {
                     Id = match.Id,
                     Username = match.UserName,
-                    Name = match.Name,
+                    Name = match.Name != null && match.Name.Length != 0 ? match.Name : match.UserName,
                     Picture = match.Picture,
                     Bio = match.Bio,
                     LookingFor = match.LookingFor,
