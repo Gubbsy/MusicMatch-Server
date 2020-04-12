@@ -1,25 +1,22 @@
 ﻿using Abstraction.Models;
 using Abstraction.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using SQLServer.Exceptions;
 using SQLServer.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SQLServer.Repositories
 {
     public class SuggestionsRepository : ISuggestionsRepository
     {
         private readonly AppDbContext appDbContext;
-        private readonly IUserRepository userRepository;
 
-        public SuggestionsRepository(AppDbContext appDbContext, IUserRepository userRepository)
+        public SuggestionsRepository(AppDbContext appDbContext)
         {
             this.appDbContext = appDbContext;
-            this.userRepository = userRepository;
         }
 
         public async Task<IEnumerable<ApplicationUser>> GetUsersInMatchRadius(double minLat, double maxLat, double minLon, double maxLon)
@@ -40,7 +37,8 @@ namespace SQLServer.Repositories
             }
         }
 
-        public async Task<bool> AddIntroduction(string uId1, string uId2, bool requested) {
+        public async Task<bool> AddIntroduction(string sender, string recipient, bool requested)
+        {
 
             bool matched = false;
 
@@ -52,18 +50,18 @@ namespace SQLServer.Repositories
                     IntroductionsDbo intro = new IntroductionsDbo()
                     {
                         Requested = requested,
-                        UId1 = uId1,
-                        UId2 = uId2
+                        Sender = sender,
+                        Recipient = recipient
                     };
 
                     appDbContext.Introductions.Add(intro);
                     await appDbContext.SaveChangesAsync().ConfigureAwait(false);
 
-                    Introductions introduction = await appDbContext.Introductions.FirstOrDefaultAsync(i => i.UId1 == uId2 && i.UId2 == uId1);
+                    Introductions introduction = await appDbContext.Introductions.FirstOrDefaultAsync(i => i.Sender == recipient && i.Recipient == sender);
 
                     if (requested == true && introduction != null && introduction.Requested == true)
                     {
-                        await AddMatch(uId1, uId2);
+                        await AddMatch(sender, recipient);
                         matched = true;
                     }
 
@@ -78,19 +76,27 @@ namespace SQLServer.Repositories
 
             return matched;
         }
-        
-        public async Task AddMatch(string uId1, string uId2) 
+
+        public async Task AddMatch(string user, string matchie)
         {
             try
             {
-                MatchesDbo match = new MatchesDbo()
+                MatchesDbo userMatch = new MatchesDbo()
                 {
-                    UId1 = uId1,
-                    UId2 = uId2,
+                    User = user,
+                    Matchie = matchie,
                     MatchDate = DateTime.Now
                 };
 
-                appDbContext.Matches.Add(match);
+                MatchesDbo matchieMatch = new MatchesDbo()
+                {
+                    User = matchie,
+                    Matchie = user,
+                    MatchDate = DateTime.Now
+                };
+
+                appDbContext.Matches.Add(userMatch);
+                appDbContext.Matches.Add(matchieMatch);
                 await appDbContext.SaveChangesAsync().ConfigureAwait(false);
             }
             catch (Exception e)
@@ -105,12 +111,12 @@ namespace SQLServer.Repositories
 
             try
             {
-                IEnumerable<Introductions> previouseIntroductions = appDbContext.Introductions.Where(i => i.UId1 == userId);
-                previouseSuggestionIds =  previouseIntroductions.Select(x => x.UId2).ToList();
+                IEnumerable<Introductions> previouseIntroductions = appDbContext.Introductions.Where(i => i.Sender == userId);
+                previouseSuggestionIds = previouseIntroductions.Select(x => x.Recipient).ToList();
             }
             catch (Exception e)
             {
-                throw new RepositoryException("Unabl to retieve previouse matches", e);
+                throw new RepositoryException("Unable to retieve previouse introductions", e);
             }
 
             return previouseSuggestionIds;

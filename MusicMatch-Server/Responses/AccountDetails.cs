@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace MusicMatch_Server.Responses
+﻿namespace MusicMatch_Server.Responses
 {
     public class AccountDetails
     {
         public string Name { get; set; }
+        public string Picture { get; set; }
         public double Lat { get; set; }
         public double Lon { get; set; }
         public string Bio { get; set; }

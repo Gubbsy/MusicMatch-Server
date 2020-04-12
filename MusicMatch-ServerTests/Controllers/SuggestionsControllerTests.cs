@@ -1,14 +1,11 @@
-﻿using Xunit;
-using MusicMatch_Server.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Abstraction.Models;
 using Abstraction.Repositories;
 using Abstraction.Services;
-using Moq;
-using Abstraction.Models;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using MusicMatch_Server.Requests;
+using System.Collections.Generic;
+using Xunit;
 
 namespace MusicMatch_Server.Controllers.Tests
 {
@@ -51,7 +48,9 @@ namespace MusicMatch_Server.Controllers.Tests
                 Venues = venues,
             };
 
-            List<ApplicationUser> matchesInRadius = new List<ApplicationUser>() { new ApplicationUser()
+            List<ApplicationUser> matchesInRadius = new List<ApplicationUser>()
+            {
+                new ApplicationUser()
                 {
                     Id = "Returned-ID",
                     Email = "Returned@email.com",
@@ -113,7 +112,9 @@ namespace MusicMatch_Server.Controllers.Tests
                 Venues = venues,
             };
 
-            List<ApplicationUser> matchesInRadius = new List<ApplicationUser>() { new ApplicationUser()
+            List<ApplicationUser> matchesInRadius = new List<ApplicationUser>()
+            {
+                new ApplicationUser()
                 {
                     Id = "Returned-ID",
                     Email = "Returned@email.com",
@@ -175,7 +176,9 @@ namespace MusicMatch_Server.Controllers.Tests
                 Venues = venues,
             };
 
-            List<ApplicationUser> matchesInRadius = new List<ApplicationUser>() { new ApplicationUser()
+            List<ApplicationUser> matchesInRadius = new List<ApplicationUser>()
+            {
+                new ApplicationUser()
                 {
                     Id = "Returned-ID",
                     Email = "Returned@email.com",
@@ -238,7 +241,9 @@ namespace MusicMatch_Server.Controllers.Tests
                 Venues = venues,
             };
 
-            List<ApplicationUser> matchesInRadius = new List<ApplicationUser>() { new ApplicationUser()
+            List<ApplicationUser> matchesInRadius = new List<ApplicationUser>()
+            {
+                new ApplicationUser()
                 {
                     Id = "Returned-ID",
                     Email = "Returned@email.com",
@@ -282,8 +287,9 @@ namespace MusicMatch_Server.Controllers.Tests
         {
             string userId = "Test-ID";
 
-            ResponseToSuggestion request = new ResponseToSuggestion() {
-                requestMatch = true,
+            ResponseToSuggestion request = new ResponseToSuggestion()
+            {
+                RequestMatch = true,
                 SuggestedUserId = "Test-Suggested-Id"
             };
 
@@ -303,7 +309,7 @@ namespace MusicMatch_Server.Controllers.Tests
 
             ResponseToSuggestion request = new ResponseToSuggestion()
             {
-                requestMatch = true,
+                RequestMatch = true,
                 SuggestedUserId = "Test-Suggested-Id"
             };
 
@@ -322,7 +328,7 @@ namespace MusicMatch_Server.Controllers.Tests
 
             ResponseToSuggestion request = new ResponseToSuggestion()
             {
-                requestMatch = true,
+                RequestMatch = true,
                 SuggestedUserId = "Test-Suggested-Id"
             };
 
@@ -331,7 +337,7 @@ namespace MusicMatch_Server.Controllers.Tests
 
             ObjectResult result = await subject.RespondToSuggestion(request);
 
-            suggesionsRepository.Verify(x => x.AddIntroduction(userId, request.SuggestedUserId, request.requestMatch), Times.Once);
+            suggesionsRepository.Verify(x => x.AddIntroduction(userId, request.SuggestedUserId, request.RequestMatch), Times.Once);
         }
     }
 }

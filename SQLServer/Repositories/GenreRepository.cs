@@ -6,12 +6,11 @@ using SQLServer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SQLServer.Repositories
 {
-   public class GenreRepository : IGenreRepository
+    public class GenreRepository : IGenreRepository
     {
         private readonly AppDbContext appDbContext;
 
@@ -19,13 +18,13 @@ namespace SQLServer.Repositories
         {
             this.appDbContext = appDbContext;
         }
-        
-        public async Task<IEnumerable<Genre>> GetAllGenres() 
-        { 
+
+        public async Task<IEnumerable<Genre>> GetAllGenres()
+        {
             try
             {
                 return await appDbContext.Genres.ToListAsync().ConfigureAwait(false);
-            }   
+            }
             catch (Exception e)
             {
                 throw new RepositoryException("Unable to retirve Genres", e);

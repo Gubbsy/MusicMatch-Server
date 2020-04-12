@@ -48,15 +48,15 @@ namespace SQLServer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "352a0d74-6e35-4677-8254-2aadf63ca607",
-                            ConcurrencyStamp = "7300fb90-b638-437d-8a18-153186bfa587",
+                            Id = "6e0e4bc6-f2f5-4087-8d1f-a873fa5706c8",
+                            ConcurrencyStamp = "7a183380-c00f-4c45-8217-7ae43ede5449",
                             Name = "artist",
                             NormalizedName = "ARTIST"
                         },
                         new
                         {
-                            Id = "9092e051-8648-44e0-a2e7-27987010d6c3",
-                            ConcurrencyStamp = "e0969ec3-d0c8-4323-8397-dd55c1cc56da",
+                            Id = "96e465bc-b2c8-4ba8-bd83-4fb901cb5935",
+                            ConcurrencyStamp = "a55f16c2-5438-419a-9534-6d56d56f77ef",
                             Name = "events manager",
                             NormalizedName = "EVENTS MANAGER"
                         });
@@ -229,6 +229,10 @@ namespace SQLServer.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Picture")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -275,14 +279,14 @@ namespace SQLServer.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("Requested")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UId1")
+                    b.Property<string>("Recipient")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UId2")
+                    b.Property<bool>("Requested")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Sender")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -301,17 +305,44 @@ namespace SQLServer.Migrations
                     b.Property<DateTime>("MatchDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UId1")
+                    b.Property<string>("Matchie")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UId2")
+                    b.Property<string>("User")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Matches");
+                });
+
+            modelBuilder.Entity("SQLServer.Models.MessageDbo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<float>("Date")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Msg")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Recipient")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("SQLServer.Models.UserGenreDbo", b =>

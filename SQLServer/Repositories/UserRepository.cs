@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
-using SQLServer.Models;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Abstraction.Models;
+using Abstraction.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SQLServer.Exceptions;
+using SQLServer.Models;
+using System;
 using System.Collections.Generic;
-using Abstraction.Repositories;
-using Abstraction.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SQLServer.Repositories
 {
@@ -35,7 +35,7 @@ namespace SQLServer.Repositories
             {
                 ApplicationUser user = await GetUserAccount(userID);
                 IList<string> roles = await userManager.GetRolesAsync((ApplicationUserDbo)user).ConfigureAwait(false);
-                if (roles.Count > 0) 
+                if (roles.Count > 0)
                 {
                     role = roles[0];
                 }
@@ -54,12 +54,12 @@ namespace SQLServer.Repositories
         {
             try
             {
-              return await appDbContext.Users
-                    .Include(u => u.Genres)
-                        .ThenInclude(g => g.Genre)
-                    .Include(u => u.Venues)
-                        .ThenInclude(v => v.Venue)
-                    .FirstOrDefaultAsync(u => u.Id == userId).ConfigureAwait(false);
+                return await appDbContext.Users
+                      .Include(u => u.Genres)
+                          .ThenInclude(g => g.Genre)
+                      .Include(u => u.Venues)
+                          .ThenInclude(v => v.Venue)
+                      .FirstOrDefaultAsync(u => u.Id == userId).ConfigureAwait(false);
 
             }
             catch (Exception e)
@@ -93,12 +93,13 @@ namespace SQLServer.Repositories
             {
                 UserName = username,
                 Email = email,
-                Name = "",
+                Name = username,
+                Picture = "",
                 Lat = 0,
                 Lon = 0,
                 Bio = "",
                 LookingFor = "",
-                MatchRadius = 100
+                MatchRadius = 100,
             };
 
             using (var transaction = appDbContext.Database.BeginTransaction())
@@ -127,7 +128,7 @@ namespace SQLServer.Repositories
         }
 
         //Update Account Details
-        public async Task UpdateAccountDetails(string userId, string[] genres, string[] venues, string name, string bio, string lookingFor, int matchRadius, double lat, double lon)
+        public async Task UpdateAccountDetails(string userId, string[] genres, string[] venues, string name, string picture, string bio, string lookingFor, int matchRadius, double lat, double lon)
         {
             ApplicationUserDbo user = (ApplicationUserDbo)await GetUserAccount(userId);
 
@@ -137,6 +138,7 @@ namespace SQLServer.Repositories
             }
 
             user.Name = name;
+            user.Picture = picture;
             user.Bio = bio;
             user.LookingFor = lookingFor;
             user.Lat = lat;

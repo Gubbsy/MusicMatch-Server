@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SQLServer.Utils
+﻿namespace SQLServer.Utils
 {
     public static class ValidatorService
     {
-        public static bool CheckIsZero(int i) 
+        public static bool CheckIsZero(int i)
         {
             return i == 0;
         }
@@ -16,12 +12,12 @@ namespace SQLServer.Utils
             return i == 0;
         }
 
-        public static string CheckIsEmpty(string s) 
+        public static string CheckIsEmpty(string s)
         {
             return s == "" || s == null ? null : s;
         }
 
-        public static string CheckRoleExists(string role) 
+        public static string CheckRoleExists(string role)
         {
             return role != AccountRoles.Artist && role != AccountRoles.EventsManager ? null : role;
         }

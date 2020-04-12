@@ -1,12 +1,9 @@
-﻿using Xunit;
-using MusicMatch_Server.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Abstraction.Models;
 using Abstraction.Repositories;
-using Moq;
-using Abstraction.Models;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
+using System.Collections.Generic;
+using Xunit;
 
 namespace MusicMatch_Server.Controllers.Tests
 {

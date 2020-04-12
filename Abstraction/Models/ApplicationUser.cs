@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Identity;
-using System.Text;
 
 namespace Abstraction.Models
 {
     public class ApplicationUser : IdentityUser
     {
         public string Name { get; set; }
+        public string Picture { get; set; }
         public double Lat { get; set; }
         public double Lon { get; set; }
         public string Bio { get; set; }

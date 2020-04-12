@@ -1,28 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Abstraction.Repositories;
 using Abstraction.Services;
 using API.Middlewares;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using MusicMatch_Server.FIlters;
-using MusicMatch_Server.Responses;
+using MusicMatch_Server.Hubs;
 using MusicMatch_Server.Services;
-using Newtonsoft.Json;
 using SQLServer;
-using SQLServer.Exceptions;
 using SQLServer.Models;
 using SQLServer.Repositories;
 
@@ -42,14 +32,19 @@ namespace MusicMatch_Server
         {
             services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DBConnection")));
 
+            services.AddScoped<ISessionService, SessionService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ISignInRepository, SignInRepository>();
             services.AddScoped<IGenreRepository, GenreRepository>();
             services.AddScoped<IVenueRepository, VenueRepository>();
             services.AddScoped<ISuggestionsRepository, SuggestionsRepository>();
-            services.AddScoped<ISessionService, SessionService>();
+            services.AddScoped<IMatchRepository, MatchRepository>();
+            services.AddScoped<IMessageRepository, MessageRepository>();
+           
 
             services.AddSingleton<HttpContextAccessor, HttpContextAccessor>();
+
+            services.AddSignalR();
 
             services.AddIdentity<ApplicationUserDbo, IdentityRole>(options =>
             {
@@ -69,8 +64,9 @@ namespace MusicMatch_Server
             })
             .ConfigureApiBehaviorOptions(options =>
             {
-               options.SuppressModelStateInvalidFilter = true;
+                options.SuppressModelStateInvalidFilter = true;
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -92,9 +88,13 @@ namespace MusicMatch_Server
 
             app.UseAuthorization();
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("/chatHub");
             });
         }
     }

@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SQLServer.Exceptions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MusicMatch_Server.FIlters
 {
@@ -25,7 +23,7 @@ namespace MusicMatch_Server.FIlters
                         Errors = GetErrorMessages(context.ModelState.Values)
                     });
                 }
-                else if (context.Exception != null) 
+                else if (context.Exception != null)
                 {
                     var errors = GetErrorMessagesFromException(context.Exception);
                     context.Result = controller.StatusCode(400, new APIResponse<string>
@@ -100,7 +98,7 @@ namespace MusicMatch_Server.FIlters
             return results;
         }
 
-        private IEnumerable<string> GetErrorMessagesFromException(Exception e) 
+        private IEnumerable<string> GetErrorMessagesFromException(Exception e)
         {
             List<string> results = new List<string>();
 
@@ -111,10 +109,10 @@ namespace MusicMatch_Server.FIlters
                     results.Add(error);
                 }
             }
-            else 
+            else
             {
                 results.Add(e.Message);
-            }       
+            }
             return results;
         }
     }

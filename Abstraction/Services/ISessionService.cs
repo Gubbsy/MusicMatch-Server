@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Abstraction.Services
+﻿namespace Abstraction.Services
 {
     public interface ISessionService
     {

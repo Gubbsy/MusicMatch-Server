@@ -6,7 +6,6 @@ using SQLServer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SQLServer.Repositories
@@ -20,17 +19,17 @@ namespace SQLServer.Repositories
             this.appDbContext = appDbContext;
         }
 
-        public async Task<IEnumerable<Venue>> GetAllVenues() 
+        public async Task<IEnumerable<Venue>> GetAllVenues()
         {
             try
             {
                 return await appDbContext.Venues.ToListAsync().ConfigureAwait(false);
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                 throw new RepositoryException("Unable to retirve Venues", e);
             }
-            
+
         }
 
         //Add Venues

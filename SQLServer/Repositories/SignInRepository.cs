@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
-using SQLServer.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
+﻿using Abstraction.Models;
+using Abstraction.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SQLServer.Models;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Abstraction.Repositories;
 
 namespace SQLServer.Repositories
 {
@@ -25,7 +22,7 @@ namespace SQLServer.Repositories
             this.appDbContext = appDbContext;
         }
 
-        public async Task<IEnumerable<string>?> SignIn(string credential, string password)
+        public async Task<ApplicationUser?> SignIn(string credential, string password)
         {
             string? username;
             Regex emailRgx = new Regex(@"^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$");
@@ -34,7 +31,7 @@ namespace SQLServer.Repositories
             {
                 username = (await appDbContext.Users.FirstOrDefaultAsync(u => u.Email == credential.ToLower()).ConfigureAwait(false))?.UserName;
             }
-            else 
+            else
             {
                 username = credential;
             }
@@ -46,11 +43,9 @@ namespace SQLServer.Repositories
                 return null;
             }
 
-            ApplicationUserDbo user = await userManager.FindByNameAsync(username).ConfigureAwait(false);
+            ApplicationUser user = await userManager.FindByNameAsync(username).ConfigureAwait(false);
 
-            IList<string> roles = await userManager.GetRolesAsync(user).ConfigureAwait(false);
-
-            return roles;
+            return user;
         }
 
         public async Task SignOut()
